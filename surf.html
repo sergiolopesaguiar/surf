@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Previsão de Tempo e Ondas · Ilha de Santa Catarina</title>
+<style>
+  :root{
+    --navy-deep:#081826;
+    --navy:#0e2c46;
+    --navy-card:#123b5c;
+    --line:#254b6b;
+    --foam:#eaf3f5;
+    --foam-dim:#9fb9c9;
+    --swell:#4fb3d9;
+    --wind:#e8a33d;
+    --alert:#e8703a;
+    --water:#5fd0c9;
+    --mono: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    --sans: 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at top left, #123c5e 0%, transparent 55%),
+      linear-gradient(180deg, var(--navy-deep) 0%, #061019 100%);
+    color:var(--foam);
+    font-family:var(--sans);
+    min-height:100vh;
+    padding:0 0 60px;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto; padding:0 20px;}
+
+  /* ---------- Hero header ---------- */
+  .hero{
+    position:relative;
+    width:100%;
+    height:clamp(180px, 32vw, 280px);
+    overflow:hidden;
+    border-bottom:1px solid var(--line);
+  }
+  .hero svg{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .hero-text{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    padding:20px 20px 22px;
+    max-width:1180px;
+    margin:0 auto;
+    box-sizing:border-box;
+  }
+  .locale-tag{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    color:var(--swell);
+    text-transform:uppercase;
+    margin-bottom:6px;
+    text-shadow:0 1px 6px rgba(0,0,0,.6);
+  }
+  h1{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:clamp(22px,4.2vw,38px);
+    margin:0;
+    letter-spacing:.01em;
+    text-shadow:0 2px 10px rgba(0,0,0,.55);
+  }
+  h1 span{color:var(--foam-dim); font-weight:400; font-style:italic;}
+  .issued{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--foam-dim);
+    margin-top:6px;
+    text-shadow:0 1px 6px rgba(0,0,0,.6);
+  }
+
+  main{ padding-top:24px; }
+
+  /* ---------- Spot selector ---------- */
+  .spot-tabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+  .spot-tab{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.04em;
+    background:var(--navy);
+    color:var(--foam-dim);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:10px 16px;
+    cursor:pointer;
+    transition:all .15s ease;
+    flex:1 1 auto;
+    min-width:150px;
+    text-align:center;
+  }
+  .spot-tab .sub{display:block; font-size:10px; color:var(--foam-dim); margin-top:2px; font-style:italic;}
+  .spot-tab:hover{border-color:var(--swell);}
+  .spot-tab.active{
+    background:linear-gradient(180deg, var(--navy-card), var(--navy));
+    color:var(--foam);
+    border-color:var(--swell);
+  }
+  .spot-tab.active .sub{color:var(--swell);}
+
+  .spot-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:16px;
+  }
+  .spot-desc{
+    font-size:13px;
+    color:var(--foam-dim);
+    max-width:640px;
+    line-height:1.5;
+  }
+  .water-temp-now{
+    text-align:right;
+    font-family:var(--mono);
+    white-space:nowrap;
+  }
+  .water-temp-now .label{font-size:10.5px;letter-spacing:.14em;color:var(--foam-dim);text-transform:uppercase;}
+  .water-temp-now .value{font-size:26px;color:var(--water);font-weight:600;}
+
+  /* ---------- Days grid ---------- */
+  .days{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:14px;
+  }
+  @media (max-width:980px){ .days{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){
+    .days{grid-template-columns:1fr;}
+    .wrap{padding:0 14px;}
+    main{padding-top:18px;}
+    .spot-tab{min-width:100%;}
+    .spot-meta{flex-direction:column; align-items:flex-start;}
+    .water-temp-now{text-align:left;}
+  }
+
+  .card{
+    background:linear-gradient(180deg, var(--navy-card) 0%, var(--navy) 100%);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:16px 14px 18px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card.today{border-color:var(--swell);}
+  .card.today::before{
+    content:"HOJE";
+    position:absolute; top:0; right:0;
+    background:var(--swell); color:var(--navy-deep);
+    font-family:var(--mono); font-size:9px; font-weight:700;
+    letter-spacing:.12em;
+    padding:3px 8px 3px 10px;
+    border-bottom-left-radius:4px;
+  }
+
+  .day-name{ font-family:var(--serif); font-size:19px; font-weight:700; }
+  .day-date{ font-family:var(--mono); font-size:11px; color:var(--foam-dim); margin-bottom:10px; }
+
+  .temp-row{ display:flex; align-items:baseline; gap:8px; margin-bottom:2px; }
+  .temp-high{font-family:var(--mono); font-size:28px; font-weight:600;}
+  .temp-unit{font-size:13px; color:var(--foam-dim);}
+
+  .sub-row{
+    display:flex;
+    justify-content:space-between;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--foam-dim);
+    margin-bottom:12px;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .sub-row b{color:var(--wind);}
+  .sub-row .water{color:var(--water); font-weight:700;}
+
+  hr.wave-rule{
+    border:none; height:6px; margin:10px 0 12px;
+    background-image: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px);
+    background-position: bottom; background-size: 100% 1px; background-repeat: repeat-x;
+  }
+
+  .section-label{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--foam-dim); margin:12px 0 6px;
+  }
+
+  .period{
+    display:grid; grid-template-columns:48px 1fr auto; align-items:center;
+    gap:8px; padding:5px 0; border-top:1px solid rgba(255,255,255,0.05);
+  }
+  .period:first-of-type{border-top:none;}
+  .period-name{font-family:var(--mono); font-size:10px; color:var(--foam-dim); text-transform:uppercase;}
+
+  .bar-track{ height:8px; background:rgba(255,255,255,0.06); border-radius:2px; position:relative; overflow:hidden; }
+  .bar-fill{ height:100%; background:linear-gradient(90deg, var(--swell), #7fd4ef); border-radius:2px; }
+
+  .swell-meta{ display:flex; align-items:center; gap:5px; font-family:var(--mono); font-size:12px; white-space:nowrap; }
+  .swell-h{font-weight:700; color:var(--foam);}
+  .swell-period{color:var(--foam-dim); font-size:10px;}
+
+  .max-flag{
+    margin-top:12px; padding-top:10px; border-top:1px dashed var(--line);
+    font-family:var(--mono); font-size:10.5px; color:var(--alert);
+    display:flex; align-items:center; gap:5px;
+  }
+  .max-flag.calm{color:var(--foam-dim);}
+
+  footer{
+    margin-top:30px; font-family:var(--mono); font-size:10.5px; color:var(--foam-dim);
+    line-height:1.7; border-top:1px solid var(--line); padding-top:14px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <svg viewBox="0 0 1200 280" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0a2340"/>
+          <stop offset="55%" stop-color="#123c5e"/>
+          <stop offset="100%" stop-color="#1a5478"/>
+        </linearGradient>
+        <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffe3b0"/>
+          <stop offset="100%" stop-color="#f2a65a"/>
+        </linearGradient>
+        <linearGradient id="seaFar" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1c5c82"/>
+          <stop offset="100%" stop-color="#164a6a"/>
+        </linearGradient>
+        <linearGradient id="seaMid" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#12405e"/>
+          <stop offset="100%" stop-color="#0d3350"/>
+        </linearGradient>
+        <linearGradient id="seaNear" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0b2c47"/>
+          <stop offset="100%" stop-color="#081f36"/>
+        </linearGradient>
+        <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#061019" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#061019" stop-opacity="0.95"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="0" y="0" width="1200" height="280" fill="url(#sky)"/>
+      <circle cx="960" cy="90" r="46" fill="url(#sun)" opacity="0.9"/>
+
+      <!-- gulls -->
+      <path d="M120 55 q10 -12 20 0 q10 -12 20 0" fill="none" stroke="#eaf3f5" stroke-width="2" opacity="0.5"/>
+      <path d="M180 80 q8 -9 16 0 q8 -9 16 0" fill="none" stroke="#eaf3f5" stroke-width="2" opacity="0.4"/>
+
+      <!-- far swell lines -->
+      <path d="M0 140 Q150 125 300 140 T600 140 T900 140 T1200 140 V150 Q1050 165 900 150 T600 150 T300 150 T0 150 Z" fill="url(#seaFar)"/>
+      <path d="M0 165 Q200 148 400 165 T800 165 T1200 165 V180 Q1000 195 800 180 T400 180 T0 180 Z" fill="url(#seaMid)"/>
+
+      <!-- surfer silhouette riding a wave -->
+      <g transform="translate(560,150)">
+        <path d="M-60 60 Q-20 -10 40 10 Q90 24 120 70 Q60 55 0 62 Q-35 66 -60 60 Z" fill="#0d3350"/>
+        <path d="M-20 5 Q0 -6 18 4" fill="none" stroke="#7fd4ef" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+        <!-- surfboard -->
+        <ellipse cx="8" cy="18" rx="26" ry="5" fill="#e8703a" transform="rotate(-18 8 18)"/>
+        <!-- surfer body -->
+        <g transform="rotate(-10 8 18)">
+          <circle cx="4" cy="-14" r="4.2" fill="#eaf3f5"/>
+          <path d="M4 -10 L2 4" stroke="#eaf3f5" stroke-width="3.4" stroke-linecap="round"/>
+          <path d="M2 -3 L-12 -9" stroke="#eaf3f5" stroke-width="3" stroke-linecap="round"/>
+          <path d="M2 -3 L15 -12" stroke="#eaf3f5" stroke-width="3" stroke-linecap="round"/>
+          <path d="M2 4 L-6 16" stroke="#eaf3f5" stroke-width="3.4" stroke-linecap="round"/>
+          <path d="M2 4 L11 15" stroke="#eaf3f5" stroke-width="3.4" stroke-linecap="round"/>
+        </g>
+      </g>
+
+      <!-- near foreground wave -->
+      <path d="M0 210 Q100 185 220 208 Q320 226 420 205 Q540 180 660 208 Q760 230 880 205 Q1000 182 1100 208 Q1150 218 1200 210 V280 H0 Z" fill="url(#seaNear)"/>
+      <path d="M0 210 Q100 185 220 208 Q320 226 420 205 Q540 180 660 208 Q760 230 880 205 Q1000 182 1100 208 Q1150 218 1200 210" fill="none" stroke="#4fb3d9" stroke-width="2.5" opacity="0.55"/>
+
+      <rect x="0" y="0" width="1200" height="280" fill="url(#fade)"/>
+    </svg>
+
+    <div class="hero-text">
+      <div class="locale-tag">Ilha de Santa Catarina · Litoral Sul</div>
+      <h1>Praias em Destaque <span>· Campeche, Matadeiro e Guarda do Embaú</span></h1>
+      <div class="issued">Emitido 14 Jul 2026, 6h05 · previsão de ondas em água aberta (nas praias, ondas quebram menores em pontos mais abrigados)</div>
+    </div>
+  </div>
+
+  <main class="wrap">
+
+    <div class="spot-tabs" id="tabs"></div>
+
+    <div class="spot-meta">
+      <div class="spot-desc" id="spotDesc"></div>
+      <div class="water-temp-now">
+        <div class="label">Temp. da água agora</div>
+        <div class="value" id="waterTempNow"></div>
+      </div>
+    </div>
+
+    <div class="days" id="days"></div>
+
+    <footer>
+      Fonte: World Beach Guide — relatórios diários de Campeche, Matadeiro e Guarda do Embaú (SC), emissão de 14 Jul 2026.
+      Altura de onda referente à face da onda em água aberta perto da costa; fatores locais (banco de areia, maré, abrigo)
+      alteram a onda real na arrebentação. Temperatura da água baseada na leitura de satélite atual e na tendência sazonal
+      (julho está próximo do mínimo anual, em torno de 17°C, esperado para agosto). Campeche funciona melhor com swell de
+      Sul e vento de noroeste; Matadeiro recebe swell de Sul/Sudeste na baía; Guarda do Embaú (foz de rio) é o pico mais
+      consistente dos três, ideal com swell de Sudeste e vento de oeste-noroeste.
+    </footer>
+
+  </main>
+
+<script>
+const spots = {
+  campeche: {
+    label: "Campeche",
+    sub: "praia exposta · direita longa",
+    desc: "Beach break exposto, funciona melhor com swell grande de Sul e vento offshore de noroeste. Pico mais irregular dos três — quando fecha, é um dos melhores do Brasil.",
+    waterTempNow: "17.4°C",
+    days: [
+      { name:"Terça", date:"14 Jul", today:true, high:17, windLo:3, windHi:11, water:17.4,
+        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.2,per:10},{label:"Noite",h:1.2,per:10}] },
+      { name:"Quarta", date:"15 Jul", high:18, windLo:18, windHi:29, water:17.3,
+        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.4,per:10},{label:"Noite",h:1.2,per:10}] },
+      { name:"Quinta", date:"16 Jul", high:19, windLo:21, windHi:27, water:17.2,
+        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.2,per:10},{label:"Noite",h:1.2,per:8}] },
+      { name:"Sexta", date:"17 Jul", high:20, windLo:19, windHi:26, water:17.2,
+        periods:[{label:"Manhã",h:1.5,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.5,per:8}] },
+      { name:"Sábado", date:"18 Jul", high:22, windLo:16, windHi:24, water:17.1,
+        periods:[{label:"Manhã",h:1.7,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.8,per:9}] },
+    ]
+  },
+  matadeiro: {
+    label: "Matadeiro",
+    sub: "baía protegida · esquerda",
+    desc: "Recebe swell de Sul/Sudeste dentro da baía, com bancos de areia geralmente bem posicionados no canto esquerdo. Boa opção quando o mar aberto está grande demais.",
+    waterTempNow: "17.5°C",
+    days: [
+      { name:"Terça", date:"14 Jul", today:true, high:17, windLo:3, windHi:11, water:17.5,
+        periods:[{label:"Manhã",h:0.9,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:10}] },
+      { name:"Quarta", date:"15 Jul", high:18, windLo:18, windHi:29, water:17.4,
+        periods:[{label:"Manhã",h:1.1,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:10}] },
+      { name:"Quinta", date:"16 Jul", high:19, windLo:21, windHi:27, water:17.3,
+        periods:[{label:"Manhã",h:1.1,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:8}] },
+      { name:"Sexta", date:"17 Jul", high:20, windLo:19, windHi:26, water:17.3,
+        periods:[{label:"Manhã",h:1.4,per:8},{label:"Tarde",h:1.4,per:8},{label:"Noite",h:1.5,per:8}] },
+      { name:"Sábado", date:"18 Jul", high:22, windLo:16, windHi:24, water:17.2,
+        periods:[{label:"Manhã",h:1.7,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.5,per:9}] },
+    ]
+  },
+  guarda: {
+    label: "Guarda do Embaú",
+    sub: "foz de rio · pico mais consistente",
+    desc: "Point break de foz de rio, considerado o pico mais confiável da região — funciona bem com swell distante de Sudeste. Ideal na maré baixa e com vento de oeste-noroeste.",
+    waterTempNow: "17.7°C",
+    days: [
+      { name:"Terça", date:"14 Jul", today:true, high:17, windLo:6, windHi:14, water:17.7,
+        periods:[{label:"Manhã",h:1.5,per:10},{label:"Tarde",h:1.5,per:10},{label:"Noite",h:1.5,per:10}] },
+      { name:"Quarta", date:"15 Jul", high:18, windLo:21, windHi:34, water:17.6,
+        periods:[{label:"Manhã",h:1.5,per:10},{label:"Tarde",h:1.5,per:10},{label:"Noite",h:1.4,per:10}] },
+      { name:"Quinta", date:"16 Jul", high:19, windLo:26, windHi:34, water:17.5,
+        periods:[{label:"Manhã",h:1.4,per:10},{label:"Tarde",h:1.4,per:9},{label:"Noite",h:1.4,per:8}] },
+      { name:"Sexta", date:"17 Jul", high:21, windLo:26, windHi:31, water:17.5,
+        periods:[{label:"Manhã",h:1.2,per:8},{label:"Tarde",h:1.2,per:8},{label:"Noite",h:1.2,per:8}] },
+      { name:"Sábado", date:"18 Jul", high:22, windLo:19, windHi:26, water:17.4,
+        periods:[{label:"Manhã",h:1.2,per:8},{label:"Tarde",h:1.2,per:8},{label:"Noite",h:1.4,per:9}] },
+    ]
+  }
+};
+
+const maxHeightScale = 2.2;
+let currentSpot = "guarda";
+
+function renderTabs(){
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = Object.entries(spots).map(([key, s]) => `
+    <div class="spot-tab ${key===currentSpot?'active':''}" data-key="${key}">
+      ${s.label}<span class="sub">${s.sub}</span>
+    </div>
+  `).join("");
+  tabs.querySelectorAll('.spot-tab').forEach(el => {
+    el.addEventListener('click', () => { currentSpot = el.dataset.key; render(); });
+  });
+}
+
+function renderCard(d){
+  const maxH = Math.max(...d.periods.map(p=>p.h));
+  const alert = maxH >= 1.5;
+  const periodsHTML = d.periods.map(p => `
+    <div class="period">
+      <div class="period-name">${p.label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100, (p.h/maxHeightScale)*100)}%"></div></div>
+      <div class="swell-meta">
+        <span class="swell-h">${p.h.toFixed(1)}m</span>
+        <span class="swell-period">${p.per}s</span>
+      </div>
+    </div>
+  `).join("");
+
+  return `
+  <div class="card ${d.today ? 'today' : ''}">
+    <div class="day-name">${d.name}</div>
+    <div class="day-date">${d.date}</div>
+
+    <div class="temp-row">
+      <span class="temp-high">${d.high}°</span><span class="temp-unit">C ar</span>
+    </div>
+    <div class="sub-row">
+      <span>Vento: <b>${d.windLo}–${d.windHi} km/h</b></span>
+      <span>Água: <span class="water">${d.water.toFixed(1)}°C</span></span>
+    </div>
+
+    <hr class="wave-rule">
+    <div class="section-label">Altura da onda (face)</div>
+    ${periodsHTML}
+
+    <div class="max-flag ${alert ? '' : 'calm'}">
+      ${alert ? '▲ Pico do dia ' + maxH.toFixed(1) + 'm' : 'Mar pequeno / sem picos relevantes'}
+    </div>
+  </div>`;
+}
+
+function render(){
+  renderTabs();
+  const s = spots[currentSpot];
+  document.getElementById('spotDesc').textContent = s.desc;
+  document.getElementById('waterTempNow').textContent = s.waterTempNow;
+  document.getElementById('days').innerHTML = s.days.map(renderCard).join("");
+}
+
+render();
+</script>
+
+</body>
+</html>
