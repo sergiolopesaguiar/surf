@@ -16,6 +16,7 @@
     --wind:#e8a33d;
     --alert:#e8703a;
     --water:#5fd0c9;
+    --whatsapp:#25D366;
     --mono: 'SF Mono', 'Consolas', 'Menlo', monospace;
     --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
     --sans: 'Helvetica Neue', Arial, sans-serif;
@@ -29,7 +30,7 @@
     color:var(--foam);
     font-family:var(--sans);
     min-height:100vh;
-    padding:0 0 60px;
+    padding:0 0 80px;
   }
 
   .wrap{max-width:1180px;margin:0 auto; padding:0 20px;}
@@ -42,15 +43,11 @@
     overflow:hidden;
     border-bottom:1px solid var(--line);
   }
-  .hero svg{
-    width:100%;
-    height:100%;
-    display:block;
-  }
+  .hero svg{ width:100%; height:100%; display:block; }
   .hero-text{
     position:absolute;
     left:0; right:0; bottom:0;
-    padding:20px 20px 22px;
+    padding:16px 20px 18px;
     max-width:1180px;
     margin:0 auto;
     box-sizing:border-box;
@@ -73,75 +70,68 @@
     text-shadow:0 2px 10px rgba(0,0,0,.55);
   }
   h1 span{color:var(--foam-dim); font-weight:400; font-style:italic;}
-  .issued{
-    font-family:var(--mono);
-    font-size:11.5px;
-    color:var(--foam-dim);
-    margin-top:6px;
-    text-shadow:0 1px 6px rgba(0,0,0,.6);
-  }
 
-  main{ padding-top:24px; }
-
-  /* ---------- Spot selector ---------- */
-  .spot-tabs{
+  /* ---------- Update label ---------- */
+  .update-bar{
     display:flex;
+    align-items:center;
     gap:8px;
-    margin-bottom:22px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--foam-dim);
+    margin-top:8px;
     flex-wrap:wrap;
   }
+  .update-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:#4fd97a;
+    box-shadow:0 0 0 rgba(79,217,122,.6);
+    animation:pulse 2s infinite;
+    flex:0 0 auto;
+  }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(79,217,122,.55); }
+    70%{ box-shadow:0 0 0 7px rgba(79,217,122,0); }
+    100%{ box-shadow:0 0 0 0 rgba(79,217,122,0); }
+  }
+  .update-bar b{color:var(--foam); font-weight:600;}
+  .update-just-refreshed{
+    color:#4fd97a;
+    opacity:0;
+    transition:opacity .4s ease;
+  }
+  .update-just-refreshed.show{opacity:1;}
+
+  main{ padding-top:22px; }
+
+  /* ---------- Spot selector ---------- */
+  .spot-tabs{ display:flex; gap:8px; margin-bottom:22px; flex-wrap:wrap; }
   .spot-tab{
-    font-family:var(--mono);
-    font-size:12px;
-    letter-spacing:.04em;
-    background:var(--navy);
-    color:var(--foam-dim);
-    border:1px solid var(--line);
-    border-radius:3px;
-    padding:10px 16px;
-    cursor:pointer;
-    transition:all .15s ease;
-    flex:1 1 auto;
-    min-width:150px;
-    text-align:center;
+    font-family:var(--mono); font-size:12px; letter-spacing:.04em;
+    background:var(--navy); color:var(--foam-dim);
+    border:1px solid var(--line); border-radius:3px;
+    padding:10px 16px; cursor:pointer; transition:all .15s ease;
+    flex:1 1 auto; min-width:150px; text-align:center;
   }
   .spot-tab .sub{display:block; font-size:10px; color:var(--foam-dim); margin-top:2px; font-style:italic;}
   .spot-tab:hover{border-color:var(--swell);}
   .spot-tab.active{
     background:linear-gradient(180deg, var(--navy-card), var(--navy));
-    color:var(--foam);
-    border-color:var(--swell);
+    color:var(--foam); border-color:var(--swell);
   }
   .spot-tab.active .sub{color:var(--swell);}
 
   .spot-meta{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    flex-wrap:wrap;
-    gap:14px;
-    margin-bottom:16px;
+    display:flex; justify-content:space-between; align-items:flex-end;
+    flex-wrap:wrap; gap:14px; margin-bottom:16px;
   }
-  .spot-desc{
-    font-size:13px;
-    color:var(--foam-dim);
-    max-width:640px;
-    line-height:1.5;
-  }
-  .water-temp-now{
-    text-align:right;
-    font-family:var(--mono);
-    white-space:nowrap;
-  }
+  .spot-desc{ font-size:13px; color:var(--foam-dim); max-width:640px; line-height:1.5; }
+  .water-temp-now{ text-align:right; font-family:var(--mono); white-space:nowrap; }
   .water-temp-now .label{font-size:10.5px;letter-spacing:.14em;color:var(--foam-dim);text-transform:uppercase;}
   .water-temp-now .value{font-size:26px;color:var(--water);font-weight:600;}
 
   /* ---------- Days grid ---------- */
-  .days{
-    display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:14px;
-  }
+  .days{ display:grid; grid-template-columns:repeat(5,1fr); gap:14px; }
   @media (max-width:980px){ .days{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:560px){
     .days{grid-template-columns:1fr;}
@@ -154,68 +144,47 @@
 
   .card{
     background:linear-gradient(180deg, var(--navy-card) 0%, var(--navy) 100%);
-    border:1px solid var(--line);
-    border-radius:4px;
-    padding:16px 14px 18px;
-    position:relative;
-    overflow:hidden;
+    border:1px solid var(--line); border-radius:4px;
+    padding:16px 14px 18px; position:relative; overflow:hidden;
   }
   .card.today{border-color:var(--swell);}
   .card.today::before{
-    content:"HOJE";
-    position:absolute; top:0; right:0;
+    content:"HOJE"; position:absolute; top:0; right:0;
     background:var(--swell); color:var(--navy-deep);
     font-family:var(--mono); font-size:9px; font-weight:700;
-    letter-spacing:.12em;
-    padding:3px 8px 3px 10px;
-    border-bottom-left-radius:4px;
+    letter-spacing:.12em; padding:3px 8px 3px 10px; border-bottom-left-radius:4px;
   }
-
   .day-name{ font-family:var(--serif); font-size:19px; font-weight:700; }
   .day-date{ font-family:var(--mono); font-size:11px; color:var(--foam-dim); margin-bottom:10px; }
-
   .temp-row{ display:flex; align-items:baseline; gap:8px; margin-bottom:2px; }
   .temp-high{font-family:var(--mono); font-size:28px; font-weight:600;}
   .temp-unit{font-size:13px; color:var(--foam-dim);}
-
   .sub-row{
-    display:flex;
-    justify-content:space-between;
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--foam-dim);
-    margin-bottom:12px;
-    gap:8px;
-    flex-wrap:wrap;
+    display:flex; justify-content:space-between; font-family:var(--mono);
+    font-size:11px; color:var(--foam-dim); margin-bottom:12px; gap:8px; flex-wrap:wrap;
   }
   .sub-row b{color:var(--wind);}
   .sub-row .water{color:var(--water); font-weight:700;}
-
   hr.wave-rule{
     border:none; height:6px; margin:10px 0 12px;
     background-image: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px);
     background-position: bottom; background-size: 100% 1px; background-repeat: repeat-x;
   }
-
   .section-label{
     font-family:var(--mono); font-size:9.5px; letter-spacing:.16em;
     text-transform:uppercase; color:var(--foam-dim); margin:12px 0 6px;
   }
-
   .period{
     display:grid; grid-template-columns:48px 1fr auto; align-items:center;
     gap:8px; padding:5px 0; border-top:1px solid rgba(255,255,255,0.05);
   }
   .period:first-of-type{border-top:none;}
   .period-name{font-family:var(--mono); font-size:10px; color:var(--foam-dim); text-transform:uppercase;}
-
   .bar-track{ height:8px; background:rgba(255,255,255,0.06); border-radius:2px; position:relative; overflow:hidden; }
   .bar-fill{ height:100%; background:linear-gradient(90deg, var(--swell), #7fd4ef); border-radius:2px; }
-
   .swell-meta{ display:flex; align-items:center; gap:5px; font-family:var(--mono); font-size:12px; white-space:nowrap; }
   .swell-h{font-weight:700; color:var(--foam);}
   .swell-period{color:var(--foam-dim); font-size:10px;}
-
   .max-flag{
     margin-top:12px; padding-top:10px; border-top:1px dashed var(--line);
     font-family:var(--mono); font-size:10.5px; color:var(--alert);
@@ -223,10 +192,52 @@
   }
   .max-flag.calm{color:var(--foam-dim);}
 
+  /* ---------- Hourly chart ---------- */
+  .chart-section{ margin-top:34px; }
+  .chart-header{
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:10px; margin-bottom:12px;
+  }
+  .chart-title{ font-family:var(--serif); font-size:20px; font-weight:700; }
+  .chart-title span{ color:var(--foam-dim); font-size:12px; font-family:var(--mono); font-style:italic; display:block; margin-top:2px; }
+  .day-pills{ display:flex; gap:6px; flex-wrap:wrap; }
+  .day-pill{
+    font-family:var(--mono); font-size:11px; padding:6px 12px;
+    background:var(--navy); border:1px solid var(--line); border-radius:20px;
+    color:var(--foam-dim); cursor:pointer; transition:all .15s ease;
+  }
+  .day-pill:hover{border-color:var(--swell);}
+  .day-pill.active{ background:var(--swell); color:var(--navy-deep); border-color:var(--swell); font-weight:700; }
+
+  .chart-card{
+    background:linear-gradient(180deg, var(--navy-card) 0%, var(--navy) 100%);
+    border:1px solid var(--line); border-radius:6px; padding:18px 14px 10px;
+  }
+  .chart-card svg{ width:100%; height:auto; display:block; }
+  .chart-note{
+    font-family:var(--mono); font-size:10px; color:var(--foam-dim);
+    margin-top:8px; text-align:right;
+  }
+
   footer{
-    margin-top:30px; font-family:var(--mono); font-size:10.5px; color:var(--foam-dim);
+    margin-top:34px; font-family:var(--mono); font-size:10.5px; color:var(--foam-dim);
     line-height:1.7; border-top:1px solid var(--line); padding-top:14px;
   }
+
+  /* ---------- WhatsApp floating button (mobile only) ---------- */
+  .wa-fab{
+    position:fixed; right:18px; bottom:18px; z-index:60;
+    display:none;
+    align-items:center; gap:8px;
+    background:var(--whatsapp); color:#08321a;
+    font-family:var(--sans); font-weight:700; font-size:13.5px;
+    border:none; border-radius:30px;
+    padding:13px 18px 13px 14px;
+    box-shadow:0 6px 18px rgba(0,0,0,.4);
+    cursor:pointer;
+  }
+  .wa-fab.visible{ display:flex; }
+  .wa-fab svg{ width:20px; height:20px; flex:0 0 auto; }
 </style>
 </head>
 <body>
@@ -263,22 +274,16 @@
 
       <rect x="0" y="0" width="1200" height="280" fill="url(#sky)"/>
       <circle cx="960" cy="90" r="46" fill="url(#sun)" opacity="0.9"/>
-
-      <!-- gulls -->
       <path d="M120 55 q10 -12 20 0 q10 -12 20 0" fill="none" stroke="#eaf3f5" stroke-width="2" opacity="0.5"/>
       <path d="M180 80 q8 -9 16 0 q8 -9 16 0" fill="none" stroke="#eaf3f5" stroke-width="2" opacity="0.4"/>
 
-      <!-- far swell lines -->
       <path d="M0 140 Q150 125 300 140 T600 140 T900 140 T1200 140 V150 Q1050 165 900 150 T600 150 T300 150 T0 150 Z" fill="url(#seaFar)"/>
       <path d="M0 165 Q200 148 400 165 T800 165 T1200 165 V180 Q1000 195 800 180 T400 180 T0 180 Z" fill="url(#seaMid)"/>
 
-      <!-- surfer silhouette riding a wave -->
       <g transform="translate(560,150)">
         <path d="M-60 60 Q-20 -10 40 10 Q90 24 120 70 Q60 55 0 62 Q-35 66 -60 60 Z" fill="#0d3350"/>
         <path d="M-20 5 Q0 -6 18 4" fill="none" stroke="#7fd4ef" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
-        <!-- surfboard -->
         <ellipse cx="8" cy="18" rx="26" ry="5" fill="#e8703a" transform="rotate(-18 8 18)"/>
-        <!-- surfer body -->
         <g transform="rotate(-10 8 18)">
           <circle cx="4" cy="-14" r="4.2" fill="#eaf3f5"/>
           <path d="M4 -10 L2 4" stroke="#eaf3f5" stroke-width="3.4" stroke-linecap="round"/>
@@ -289,17 +294,19 @@
         </g>
       </g>
 
-      <!-- near foreground wave -->
       <path d="M0 210 Q100 185 220 208 Q320 226 420 205 Q540 180 660 208 Q760 230 880 205 Q1000 182 1100 208 Q1150 218 1200 210 V280 H0 Z" fill="url(#seaNear)"/>
       <path d="M0 210 Q100 185 220 208 Q320 226 420 205 Q540 180 660 208 Q760 230 880 205 Q1000 182 1100 208 Q1150 218 1200 210" fill="none" stroke="#4fb3d9" stroke-width="2.5" opacity="0.55"/>
-
       <rect x="0" y="0" width="1200" height="280" fill="url(#fade)"/>
     </svg>
 
     <div class="hero-text">
       <div class="locale-tag">Ilha de Santa Catarina · Litoral Sul</div>
       <h1>Praias em Destaque <span>· Campeche, Matadeiro e Guarda do Embaú</span></h1>
-      <div class="issued">Emitido 14 Jul 2026, 6h05 · previsão de ondas em água aberta (nas praias, ondas quebram menores em pontos mais abrigados)</div>
+      <div class="update-bar">
+        <span class="update-dot"></span>
+        <span>Atualizado às <b id="updateTime">--:--</b> · próxima atualização automática em <b id="updateCountdown">30:00</b></span>
+        <span class="update-just-refreshed" id="justRefreshed">✓ atualizado agora</span>
+      </div>
     </div>
   </div>
 
@@ -317,16 +324,33 @@
 
     <div class="days" id="days"></div>
 
+    <div class="chart-section">
+      <div class="chart-header">
+        <div class="chart-title">Altura da onda ao longo do dia<span id="chartSpotLabel"></span></div>
+        <div class="day-pills" id="dayPills"></div>
+      </div>
+      <div class="chart-card">
+        <svg id="hourlyChart" viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="chart-note">dados a cada 3 horas (03h–21h) · fonte: World Beach Guide</div>
+      </div>
+    </div>
+
     <footer>
       Fonte: World Beach Guide — relatórios diários de Campeche, Matadeiro e Guarda do Embaú (SC), emissão de 14 Jul 2026.
       Altura de onda referente à face da onda em água aberta perto da costa; fatores locais (banco de areia, maré, abrigo)
       alteram a onda real na arrebentação. Temperatura da água baseada na leitura de satélite atual e na tendência sazonal
       (julho está próximo do mínimo anual, em torno de 17°C, esperado para agosto). Campeche funciona melhor com swell de
       Sul e vento de noroeste; Matadeiro recebe swell de Sul/Sudeste na baía; Guarda do Embaú (foz de rio) é o pico mais
-      consistente dos três, ideal com swell de Sudeste e vento de oeste-noroeste.
+      consistente dos três, ideal com swell de Sudeste e vento de oeste-noroeste. A página recarrega automaticamente a
+      cada 30 minutos para buscar a versão mais recente.
     </footer>
 
   </main>
+
+  <button class="wa-fab" id="waFab">
+    <svg viewBox="0 0 32 32" fill="#08321a"><path d="M16.04 3C9.37 3 3.98 8.39 3.98 15.06c0 2.24.61 4.34 1.67 6.15L4 29l8.02-1.62a12 12 0 0 0 4.02.69c6.67 0 12.06-5.39 12.06-12.06C28.1 8.39 22.71 3 16.04 3zm0 21.86c-1.4 0-2.75-.36-3.94-1.03l-.28-.16-4.76.96.98-4.65-.18-.29a9.7 9.7 0 0 1-1.5-5.17c0-5.4 4.4-9.8 9.8-9.8 5.4 0 9.8 4.4 9.8 9.8-.02 5.42-4.42 9.34-9.92 9.34zm5.35-7.32c-.29-.15-1.73-.85-2-.95-.27-.1-.46-.15-.66.15-.2.29-.76.95-.93 1.14-.17.2-.34.22-.63.07-.29-.15-1.23-.45-2.34-1.44-.86-.77-1.45-1.71-1.62-2-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5h-.56c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.44s1.05 2.83 1.19 3.03c.15.2 2.06 3.14 5 4.4.7.3 1.24.48 1.67.62.7.22 1.34.19 1.84.12.56-.08 1.73-.71 1.98-1.39.24-.68.24-1.27.17-1.39-.07-.12-.26-.2-.55-.35z"/></svg>
+    Chamar pra surfar
+  </button>
 
 <script>
 const spots = {
@@ -337,15 +361,20 @@ const spots = {
     waterTempNow: "17.4°C",
     days: [
       { name:"Terça", date:"14 Jul", today:true, high:17, windLo:3, windHi:11, water:17.4,
-        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.2,per:10},{label:"Noite",h:1.2,per:10}] },
+        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.2,per:10},{label:"Noite",h:1.2,per:10}],
+        hourly:[1.1,1.2,1.2,1.2,1.2,1.2,1.2] },
       { name:"Quarta", date:"15 Jul", high:18, windLo:18, windHi:29, water:17.3,
-        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.4,per:10},{label:"Noite",h:1.2,per:10}] },
+        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.4,per:10},{label:"Noite",h:1.2,per:10}],
+        hourly:[1.2,1.2,1.2,1.2,1.4,1.4,1.2] },
       { name:"Quinta", date:"16 Jul", high:19, windLo:21, windHi:27, water:17.2,
-        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.2,per:10},{label:"Noite",h:1.2,per:8}] },
+        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.2,per:10},{label:"Noite",h:1.2,per:8}],
+        hourly:[1.2,1.2,1.2,1.2,1.2,1.2,1.2] },
       { name:"Sexta", date:"17 Jul", high:20, windLo:19, windHi:26, water:17.2,
-        periods:[{label:"Manhã",h:1.5,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.5,per:8}] },
+        periods:[{label:"Manhã",h:1.5,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.5,per:8}],
+        hourly:[1.5,1.5,1.5,1.5,1.7,1.5,1.5] },
       { name:"Sábado", date:"18 Jul", high:22, windLo:16, windHi:24, water:17.1,
-        periods:[{label:"Manhã",h:1.7,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.8,per:9}] },
+        periods:[{label:"Manhã",h:1.7,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.8,per:9}],
+        hourly:[1.7,1.7,1.7,1.7,1.7,1.7,1.8] },
     ]
   },
   matadeiro: {
@@ -355,15 +384,20 @@ const spots = {
     waterTempNow: "17.5°C",
     days: [
       { name:"Terça", date:"14 Jul", today:true, high:17, windLo:3, windHi:11, water:17.5,
-        periods:[{label:"Manhã",h:0.9,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:10}] },
+        periods:[{label:"Manhã",h:0.9,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:10}],
+        hourly:[0.9,0.9,0.9,0.9,1.1,1.1,1.1] },
       { name:"Quarta", date:"15 Jul", high:18, windLo:18, windHi:29, water:17.4,
-        periods:[{label:"Manhã",h:1.1,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:10}] },
+        periods:[{label:"Manhã",h:1.1,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:10}],
+        hourly:[1.1,1.1,1.1,1.1,1.1,1.1,1.1] },
       { name:"Quinta", date:"16 Jul", high:19, windLo:21, windHi:27, water:17.3,
-        periods:[{label:"Manhã",h:1.1,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:8}] },
+        periods:[{label:"Manhã",h:1.1,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:8}],
+        hourly:[1.1,1.1,1.1,1.1,1.1,1.1,1.1] },
       { name:"Sexta", date:"17 Jul", high:20, windLo:19, windHi:26, water:17.3,
-        periods:[{label:"Manhã",h:1.4,per:8},{label:"Tarde",h:1.4,per:8},{label:"Noite",h:1.5,per:8}] },
+        periods:[{label:"Manhã",h:1.4,per:8},{label:"Tarde",h:1.4,per:8},{label:"Noite",h:1.5,per:8}],
+        hourly:[1.5,1.5,1.4,1.4,1.4,1.5,1.5] },
       { name:"Sábado", date:"18 Jul", high:22, windLo:16, windHi:24, water:17.2,
-        periods:[{label:"Manhã",h:1.7,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.5,per:9}] },
+        periods:[{label:"Manhã",h:1.7,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.5,per:9}],
+        hourly:[1.7,1.7,1.7,1.7,1.7,1.7,1.5] },
     ]
   },
   guarda: {
@@ -373,22 +407,30 @@ const spots = {
     waterTempNow: "17.7°C",
     days: [
       { name:"Terça", date:"14 Jul", today:true, high:17, windLo:6, windHi:14, water:17.7,
-        periods:[{label:"Manhã",h:1.5,per:10},{label:"Tarde",h:1.5,per:10},{label:"Noite",h:1.5,per:10}] },
+        periods:[{label:"Manhã",h:1.5,per:10},{label:"Tarde",h:1.5,per:10},{label:"Noite",h:1.5,per:10}],
+        hourly:[1.5,1.5,1.5,1.5,1.5,1.5,1.5] },
       { name:"Quarta", date:"15 Jul", high:18, windLo:21, windHi:34, water:17.6,
-        periods:[{label:"Manhã",h:1.5,per:10},{label:"Tarde",h:1.5,per:10},{label:"Noite",h:1.4,per:10}] },
+        periods:[{label:"Manhã",h:1.5,per:10},{label:"Tarde",h:1.5,per:10},{label:"Noite",h:1.4,per:10}],
+        hourly:[1.5,1.5,1.5,1.4,1.5,1.5,1.4] },
       { name:"Quinta", date:"16 Jul", high:19, windLo:26, windHi:34, water:17.5,
-        periods:[{label:"Manhã",h:1.4,per:10},{label:"Tarde",h:1.4,per:9},{label:"Noite",h:1.4,per:8}] },
+        periods:[{label:"Manhã",h:1.4,per:10},{label:"Tarde",h:1.4,per:9},{label:"Noite",h:1.4,per:8}],
+        hourly:[1.4,1.4,1.4,1.4,1.4,1.4,1.4] },
       { name:"Sexta", date:"17 Jul", high:21, windLo:26, windHi:31, water:17.5,
-        periods:[{label:"Manhã",h:1.2,per:8},{label:"Tarde",h:1.2,per:8},{label:"Noite",h:1.2,per:8}] },
+        periods:[{label:"Manhã",h:1.2,per:8},{label:"Tarde",h:1.2,per:8},{label:"Noite",h:1.2,per:8}],
+        hourly:[1.1,1.1,1.2,1.2,1.2,1.2,1.2] },
       { name:"Sábado", date:"18 Jul", high:22, windLo:19, windHi:26, water:17.4,
-        periods:[{label:"Manhã",h:1.2,per:8},{label:"Tarde",h:1.2,per:8},{label:"Noite",h:1.4,per:9}] },
+        periods:[{label:"Manhã",h:1.2,per:8},{label:"Tarde",h:1.2,per:8},{label:"Noite",h:1.4,per:9}],
+        hourly:[1.2,1.2,1.2,1.2,1.2,1.2,1.4] },
     ]
   }
 };
 
+const hourLabels = ["03h","06h","09h","12h","15h","18h","21h"];
 const maxHeightScale = 2.2;
 let currentSpot = "guarda";
+let currentDay = 0;
 
+/* ---------- Tabs / cards ---------- */
 function renderTabs(){
   const tabs = document.getElementById('tabs');
   tabs.innerHTML = Object.entries(spots).map(([key, s]) => `
@@ -419,7 +461,6 @@ function renderCard(d){
   <div class="card ${d.today ? 'today' : ''}">
     <div class="day-name">${d.name}</div>
     <div class="day-date">${d.date}</div>
-
     <div class="temp-row">
       <span class="temp-high">${d.high}°</span><span class="temp-unit">C ar</span>
     </div>
@@ -427,26 +468,139 @@ function renderCard(d){
       <span>Vento: <b>${d.windLo}–${d.windHi} km/h</b></span>
       <span>Água: <span class="water">${d.water.toFixed(1)}°C</span></span>
     </div>
-
     <hr class="wave-rule">
     <div class="section-label">Altura da onda (face)</div>
     ${periodsHTML}
-
     <div class="max-flag ${alert ? '' : 'calm'}">
       ${alert ? '▲ Pico do dia ' + maxH.toFixed(1) + 'm' : 'Mar pequeno / sem picos relevantes'}
     </div>
   </div>`;
 }
 
+/* ---------- Hourly chart ---------- */
+function renderDayPills(){
+  const s = spots[currentSpot];
+  const pills = document.getElementById('dayPills');
+  pills.innerHTML = s.days.map((d,i) => `
+    <div class="day-pill ${i===currentDay?'active':''}" data-idx="${i}">${d.name.slice(0,3)} ${d.date.split(' ')[0]}</div>
+  `).join("");
+  pills.querySelectorAll('.day-pill').forEach(el => {
+    el.addEventListener('click', () => { currentDay = parseInt(el.dataset.idx); renderChart(); });
+  });
+}
+
+function renderChart(){
+  const s = spots[currentSpot];
+  const day = s.days[currentDay];
+  const values = day.hourly;
+  document.getElementById('chartSpotLabel').textContent = `${s.label} · ${day.name}, ${day.date}`;
+
+  const W = 640, H = 220;
+  const padL = 34, padR = 14, padT = 18, padB = 30;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const maxScale = 2.2;
+
+  const xFor = i => padL + (i/(values.length-1)) * plotW;
+  const yFor = v => padT + plotH - (v/maxScale)*plotH;
+
+  let grid = "";
+  [0,0.5,1,1.5,2].forEach(v => {
+    const y = yFor(v);
+    grid += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#254b6b" stroke-width="1" opacity="0.5"/>`;
+    grid += `<text x="${padL-8}" y="${y+3}" font-family="SF Mono, Consolas, monospace" font-size="9" fill="#9fb9c9" text-anchor="end">${v.toFixed(1)}</text>`;
+  });
+
+  const points = values.map((v,i) => `${xFor(i)},${yFor(v)}`).join(" ");
+  const areaPoints = `${padL},${yFor(0)} ` + points + ` ${xFor(values.length-1)},${yFor(0)}`;
+
+  const dots = values.map((v,i) => `
+    <circle cx="${xFor(i)}" cy="${yFor(v)}" r="4" fill="#4fb3d9" stroke="#081826" stroke-width="1.5"/>
+    <text x="${xFor(i)}" y="${yFor(v)-10}" font-family="SF Mono, Consolas, monospace" font-size="10" fill="#eaf3f5" text-anchor="middle" font-weight="600">${v.toFixed(1)}m</text>
+    <text x="${xFor(i)}" y="${H-8}" font-family="SF Mono, Consolas, monospace" font-size="9.5" fill="#9fb9c9" text-anchor="middle">${hourLabels[i]}</text>
+  `).join("");
+
+  const svg = `
+    <defs>
+      <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#4fb3d9" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#4fb3d9" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    ${grid}
+    <polygon points="${areaPoints}" fill="url(#areaGrad)"/>
+    <polyline points="${points}" fill="none" stroke="#4fb3d9" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${dots}
+  `;
+  document.getElementById('hourlyChart').innerHTML = svg;
+}
+
+/* ---------- WhatsApp invite (mobile only) ---------- */
+function isMobileDevice(){
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+function setupWhatsApp(){
+  const fab = document.getElementById('waFab');
+  if (!isMobileDevice()){ return; }
+  fab.classList.add('visible');
+  fab.addEventListener('click', () => {
+    const s = spots[currentSpot];
+    const d = s.days[currentDay];
+    const maxH = Math.max(...d.periods.map(p=>p.h));
+    const msg = `🌊 Bora surfar em ${s.label}? ${d.name} (${d.date}) tá com picos de até ${maxH.toFixed(1)}m e água a ${d.water.toFixed(1)}°C. Confere a previsão completa!`;
+    const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+  });
+}
+
+/* ---------- Auto-refresh + update label ---------- */
+const REFRESH_MS = 30 * 60 * 1000;
+function setUpdateLabel(justRefreshed){
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('updateTime').textContent = `${hh}:${mm}`;
+  if (justRefreshed){
+    const badge = document.getElementById('justRefreshed');
+    badge.classList.add('show');
+    setTimeout(() => badge.classList.remove('show'), 3000);
+  }
+}
+
+function startCountdown(){
+  let remainingMs = REFRESH_MS;
+  const el = document.getElementById('updateCountdown');
+  setInterval(() => {
+    remainingMs -= 1000;
+    if (remainingMs <= 0){ remainingMs = REFRESH_MS; }
+    const m = String(Math.floor(remainingMs/60000)).padStart(2,'0');
+    const sec = String(Math.floor((remainingMs%60000)/1000)).padStart(2,'0');
+    el.textContent = `${m}:${sec}`;
+  }, 1000);
+}
+
+function scheduleAutoRefresh(){
+  setTimeout(() => { location.reload(); }, REFRESH_MS);
+}
+
+/* ---------- Render ---------- */
 function render(){
   renderTabs();
   const s = spots[currentSpot];
   document.getElementById('spotDesc').textContent = s.desc;
   document.getElementById('waterTempNow').textContent = s.waterTempNow;
   document.getElementById('days').innerHTML = s.days.map(renderCard).join("");
+  currentDay = 0;
+  renderDayPills();
+  renderChart();
 }
 
 render();
+setUpdateLabel(true);
+startCountdown();
+scheduleAutoRefresh();
+setupWhatsApp();
 </script>
 
 </body>
