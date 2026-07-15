@@ -246,25 +246,18 @@
     <svg viewBox="0 0 1200 280" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#0a2340"/>
-          <stop offset="55%" stop-color="#123c5e"/>
-          <stop offset="100%" stop-color="#1a5478"/>
+          <stop offset="0%" stop-color="#1f8fd4"/>
+          <stop offset="60%" stop-color="#3fc6e0"/>
+          <stop offset="100%" stop-color="#7fe3d8"/>
         </linearGradient>
         <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#ffe3b0"/>
-          <stop offset="100%" stop-color="#f2a65a"/>
+          <stop offset="0%" stop-color="#fff2b8"/>
+          <stop offset="100%" stop-color="#ffb703"/>
         </linearGradient>
-        <linearGradient id="seaFar" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#1c5c82"/>
-          <stop offset="100%" stop-color="#164a6a"/>
-        </linearGradient>
-        <linearGradient id="seaMid" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#12405e"/>
-          <stop offset="100%" stop-color="#0d3350"/>
-        </linearGradient>
-        <linearGradient id="seaNear" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#0b2c47"/>
-          <stop offset="100%" stop-color="#081f36"/>
+        <linearGradient id="waveFace" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#baf5e6"/>
+          <stop offset="45%" stop-color="#2fd6c4"/>
+          <stop offset="100%" stop-color="#0a8fae"/>
         </linearGradient>
         <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#061019" stop-opacity="0"/>
@@ -273,29 +266,51 @@
       </defs>
 
       <rect x="0" y="0" width="1200" height="280" fill="url(#sky)"/>
-      <circle cx="960" cy="90" r="46" fill="url(#sun)" opacity="0.9"/>
-      <path d="M120 55 q10 -12 20 0 q10 -12 20 0" fill="none" stroke="#eaf3f5" stroke-width="2" opacity="0.5"/>
-      <path d="M180 80 q8 -9 16 0 q8 -9 16 0" fill="none" stroke="#eaf3f5" stroke-width="2" opacity="0.4"/>
+      <circle cx="990" cy="65" r="44" fill="url(#sun)"/>
+      <g stroke="#ffe8a0" stroke-width="3" stroke-linecap="round" opacity="0.7">
+        <line x1="990" y1="0" x2="990" y2="14"/>
+        <line x1="1046" y1="65" x2="1060" y2="65"/>
+        <line x1="1030" y1="18" x2="1040" y2="8"/>
+        <line x1="1030" y1="112" x2="1040" y2="122"/>
+      </g>
+      <path d="M120 45 q9 -10 18 0 q9 -10 18 0" fill="none" stroke="#fbfffe" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+      <path d="M195 68 q7 -8 14 0 q7 -8 14 0" fill="none" stroke="#fbfffe" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
 
-      <path d="M0 140 Q150 125 300 140 T600 140 T900 140 T1200 140 V150 Q1050 165 900 150 T600 150 T300 150 T0 150 Z" fill="url(#seaFar)"/>
-      <path d="M0 165 Q200 148 400 165 T800 165 T1200 165 V180 Q1000 195 800 180 T400 180 T0 180 Z" fill="url(#seaMid)"/>
+      <path d="M0 145 Q150 130 300 145 T600 145 T900 145 T1200 145 V165 Q1050 178 900 165 T600 165 T300 165 T0 165 Z" fill="#12b3c9" opacity="0.55"/>
 
-      <g transform="translate(560,150)">
-        <path d="M-60 60 Q-20 -10 40 10 Q90 24 120 70 Q60 55 0 62 Q-35 66 -60 60 Z" fill="#0d3350"/>
-        <path d="M-20 5 Q0 -6 18 4" fill="none" stroke="#7fd4ef" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
-        <ellipse cx="8" cy="18" rx="26" ry="5" fill="#e8703a" transform="rotate(-18 8 18)"/>
-        <g transform="rotate(-10 8 18)">
-          <circle cx="4" cy="-14" r="4.2" fill="#eaf3f5"/>
-          <path d="M4 -10 L2 4" stroke="#eaf3f5" stroke-width="3.4" stroke-linecap="round"/>
-          <path d="M2 -3 L-12 -9" stroke="#eaf3f5" stroke-width="3" stroke-linecap="round"/>
-          <path d="M2 -3 L15 -12" stroke="#eaf3f5" stroke-width="3" stroke-linecap="round"/>
-          <path d="M2 4 L-6 16" stroke="#eaf3f5" stroke-width="3.4" stroke-linecap="round"/>
-          <path d="M2 4 L11 15" stroke="#eaf3f5" stroke-width="3.4" stroke-linecap="round"/>
-        </g>
+      <path d="M0 280 V190 Q120 150 260 175 Q360 193 420 165 Q480 138 560 150 Q660 165 700 130 Q740 100 820 108 Q880 114 900 150 Q915 178 870 190 Q830 200 815 175 Q806 158 825 152 Q840 148 845 158 Q848 166 838 168" fill="url(#waveFace)"/>
+      <path d="M0 190 Q120 150 260 175 Q360 193 420 165 Q480 138 560 150 Q660 165 700 130 Q740 100 820 108 Q880 114 900 150 Q915 178 870 190 Q830 200 815 175" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+
+      <g transform="translate(560,150) rotate(-10)">
+        <ellipse cx="0" cy="0" rx="50" ry="10" fill="#ff7a3d"/>
+        <circle cx="-6" cy="-28" r="8" fill="#0d2b3e"/>
+        <path d="M-6 -20 L-9 6" stroke="#0d2b3e" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M-9 -10 L-34 -22" stroke="#0d2b3e" stroke-width="6" stroke-linecap="round"/>
+        <path d="M-9 -10 L20 -26" stroke="#0d2b3e" stroke-width="6" stroke-linecap="round"/>
+        <path d="M-9 6 L-24 30" stroke="#0d2b3e" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M-9 6 L18 28" stroke="#0d2b3e" stroke-width="6.5" stroke-linecap="round"/>
+      </g>
+      <circle cx="500" cy="168" r="4" fill="#ffffff" opacity="0.8"/>
+      <circle cx="480" cy="176" r="3" fill="#ffffff" opacity="0.6"/>
+      <circle cx="462" cy="180" r="2.4" fill="#ffffff" opacity="0.5"/>
+
+      <g fill="#0d2b3e" opacity="0.9">
+        <path d="M60 250 Q30 210 55 175 Q40 215 70 230 Z"/>
+        <path d="M60 250 Q95 200 75 168 Q100 205 80 235 Z"/>
+        <path d="M60 250 Q20 235 10 205 Q30 232 68 240 Z"/>
+        <rect x="55" y="245" width="10" height="35" rx="3"/>
+      </g>
+      <g fill="#0d2b3e" opacity="0.85">
+        <path d="M1160 260 Q1190 225 1170 195 Q1195 228 1168 245 Z"/>
+        <path d="M1160 260 Q1120 215 1140 185 Q1118 220 1150 240 Z"/>
+        <rect x="1155" y="255" width="9" height="30" rx="3"/>
       </g>
 
-      <path d="M0 210 Q100 185 220 208 Q320 226 420 205 Q540 180 660 208 Q760 230 880 205 Q1000 182 1100 208 Q1150 218 1200 210 V280 H0 Z" fill="url(#seaNear)"/>
-      <path d="M0 210 Q100 185 220 208 Q320 226 420 205 Q540 180 660 208 Q760 230 880 205 Q1000 182 1100 208 Q1150 218 1200 210" fill="none" stroke="#4fb3d9" stroke-width="2.5" opacity="0.55"/>
+      <path d="M100 90 q14 -8 26 0 q-6 6 -13 5 q-7 -1 -13 -5" fill="#0d2b3e" opacity="0.6"/>
+      <path d="M170 60 q11 -7 21 0 q-5 5 -10 4 q-6 -1 -11 -4" fill="#0d2b3e" opacity="0.5"/>
+
+      <path d="M0 230 Q100 212 220 228 Q320 240 420 224 V280 H0 Z" fill="#03c4a0" opacity="0.85"/>
+      <path d="M780 222 Q900 210 1050 222 Q1150 230 1200 224 V280 H780 Z" fill="#03c4a0" opacity="0.85"/>
       <rect x="0" y="0" width="1200" height="280" fill="url(#fade)"/>
     </svg>
 
@@ -331,18 +346,18 @@
       </div>
       <div class="chart-card">
         <svg id="hourlyChart" viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg"></svg>
-        <div class="chart-note">dados a cada 3 horas (03h–21h) · fonte: World Beach Guide</div>
+        <div class="chart-note">dados a cada 3 horas (03h–21h) · fonte: Open-Meteo Marine</div>
       </div>
     </div>
 
     <footer>
-      Fonte: World Beach Guide — relatórios diários de Campeche, Matadeiro e Guarda do Embaú (SC), emissão de 14 Jul 2026.
-      Altura de onda referente à face da onda em água aberta perto da costa; fatores locais (banco de areia, maré, abrigo)
-      alteram a onda real na arrebentação. Temperatura da água baseada na leitura de satélite atual e na tendência sazonal
-      (julho está próximo do mínimo anual, em torno de 17°C, esperado para agosto). Campeche funciona melhor com swell de
-      Sul e vento de noroeste; Matadeiro recebe swell de Sul/Sudeste na baía; Guarda do Embaú (foz de rio) é o pico mais
-      consistente dos três, ideal com swell de Sudeste e vento de oeste-noroeste. A página recarrega automaticamente a
-      cada 30 minutos para buscar a versão mais recente.
+      Dados de onda, período e temperatura da água: Open-Meteo Marine Weather API (modelos DWD/ECMWF/GFS Wave).
+      Dados de vento e temperatura do ar: Open-Meteo Forecast API. Ambos atualizados em tempo real a cada carregamento
+      da página. Altura de onda referente à face da onda em água aberta perto da costa; fatores locais (banco de areia,
+      maré, abrigo) alteram a onda real na arrebentação. Campeche funciona melhor com swell de Sul e vento de noroeste;
+      Matadeiro recebe swell de Sul/Sudeste na baía; Guarda do Embaú (foz de rio) é o pico mais consistente dos três,
+      ideal com swell de Sudeste e vento de oeste-noroeste. A página recarrega automaticamente a cada 30 minutos para
+      buscar a previsão mais recente.
     </footer>
 
   </main>
@@ -353,82 +368,134 @@
   </button>
 
 <script>
-const spots = {
+const spotMeta = {
   campeche: {
     label: "Campeche",
     sub: "praia exposta · direita longa",
     desc: "Beach break exposto, funciona melhor com swell grande de Sul e vento offshore de noroeste. Pico mais irregular dos três — quando fecha, é um dos melhores do Brasil.",
-    waterTempNow: "17.4°C",
-    days: [
-      { name:"Terça", date:"14 Jul", today:true, high:17, windLo:3, windHi:11, water:17.4,
-        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.2,per:10},{label:"Noite",h:1.2,per:10}],
-        hourly:[1.1,1.2,1.2,1.2,1.2,1.2,1.2] },
-      { name:"Quarta", date:"15 Jul", high:18, windLo:18, windHi:29, water:17.3,
-        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.4,per:10},{label:"Noite",h:1.2,per:10}],
-        hourly:[1.2,1.2,1.2,1.2,1.4,1.4,1.2] },
-      { name:"Quinta", date:"16 Jul", high:19, windLo:21, windHi:27, water:17.2,
-        periods:[{label:"Manhã",h:1.2,per:10},{label:"Tarde",h:1.2,per:10},{label:"Noite",h:1.2,per:8}],
-        hourly:[1.2,1.2,1.2,1.2,1.2,1.2,1.2] },
-      { name:"Sexta", date:"17 Jul", high:20, windLo:19, windHi:26, water:17.2,
-        periods:[{label:"Manhã",h:1.5,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.5,per:8}],
-        hourly:[1.5,1.5,1.5,1.5,1.7,1.5,1.5] },
-      { name:"Sábado", date:"18 Jul", high:22, windLo:16, windHi:24, water:17.1,
-        periods:[{label:"Manhã",h:1.7,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.8,per:9}],
-        hourly:[1.7,1.7,1.7,1.7,1.7,1.7,1.8] },
-    ]
+    lat: -27.6801, lon: -48.4728
   },
   matadeiro: {
     label: "Matadeiro",
     sub: "baía protegida · esquerda",
     desc: "Recebe swell de Sul/Sudeste dentro da baía, com bancos de areia geralmente bem posicionados no canto esquerdo. Boa opção quando o mar aberto está grande demais.",
-    waterTempNow: "17.5°C",
-    days: [
-      { name:"Terça", date:"14 Jul", today:true, high:17, windLo:3, windHi:11, water:17.5,
-        periods:[{label:"Manhã",h:0.9,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:10}],
-        hourly:[0.9,0.9,0.9,0.9,1.1,1.1,1.1] },
-      { name:"Quarta", date:"15 Jul", high:18, windLo:18, windHi:29, water:17.4,
-        periods:[{label:"Manhã",h:1.1,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:10}],
-        hourly:[1.1,1.1,1.1,1.1,1.1,1.1,1.1] },
-      { name:"Quinta", date:"16 Jul", high:19, windLo:21, windHi:27, water:17.3,
-        periods:[{label:"Manhã",h:1.1,per:10},{label:"Tarde",h:1.1,per:10},{label:"Noite",h:1.1,per:8}],
-        hourly:[1.1,1.1,1.1,1.1,1.1,1.1,1.1] },
-      { name:"Sexta", date:"17 Jul", high:20, windLo:19, windHi:26, water:17.3,
-        periods:[{label:"Manhã",h:1.4,per:8},{label:"Tarde",h:1.4,per:8},{label:"Noite",h:1.5,per:8}],
-        hourly:[1.5,1.5,1.4,1.4,1.4,1.5,1.5] },
-      { name:"Sábado", date:"18 Jul", high:22, windLo:16, windHi:24, water:17.2,
-        periods:[{label:"Manhã",h:1.7,per:8},{label:"Tarde",h:1.7,per:8},{label:"Noite",h:1.5,per:9}],
-        hourly:[1.7,1.7,1.7,1.7,1.7,1.7,1.5] },
-    ]
+    lat: -27.7357, lon: -48.5069
   },
   guarda: {
     label: "Guarda do Embaú",
     sub: "foz de rio · pico mais consistente",
     desc: "Point break de foz de rio, considerado o pico mais confiável da região — funciona bem com swell distante de Sudeste. Ideal na maré baixa e com vento de oeste-noroeste.",
-    waterTempNow: "17.7°C",
-    days: [
-      { name:"Terça", date:"14 Jul", today:true, high:17, windLo:6, windHi:14, water:17.7,
-        periods:[{label:"Manhã",h:1.5,per:10},{label:"Tarde",h:1.5,per:10},{label:"Noite",h:1.5,per:10}],
-        hourly:[1.5,1.5,1.5,1.5,1.5,1.5,1.5] },
-      { name:"Quarta", date:"15 Jul", high:18, windLo:21, windHi:34, water:17.6,
-        periods:[{label:"Manhã",h:1.5,per:10},{label:"Tarde",h:1.5,per:10},{label:"Noite",h:1.4,per:10}],
-        hourly:[1.5,1.5,1.5,1.4,1.5,1.5,1.4] },
-      { name:"Quinta", date:"16 Jul", high:19, windLo:26, windHi:34, water:17.5,
-        periods:[{label:"Manhã",h:1.4,per:10},{label:"Tarde",h:1.4,per:9},{label:"Noite",h:1.4,per:8}],
-        hourly:[1.4,1.4,1.4,1.4,1.4,1.4,1.4] },
-      { name:"Sexta", date:"17 Jul", high:21, windLo:26, windHi:31, water:17.5,
-        periods:[{label:"Manhã",h:1.2,per:8},{label:"Tarde",h:1.2,per:8},{label:"Noite",h:1.2,per:8}],
-        hourly:[1.1,1.1,1.2,1.2,1.2,1.2,1.2] },
-      { name:"Sábado", date:"18 Jul", high:22, windLo:19, windHi:26, water:17.4,
-        periods:[{label:"Manhã",h:1.2,per:8},{label:"Tarde",h:1.2,per:8},{label:"Noite",h:1.4,per:9}],
-        hourly:[1.2,1.2,1.2,1.2,1.2,1.2,1.4] },
-    ]
+    lat: -28.0206, lon: -48.6172
   }
 };
+const spotOrder = ["campeche","matadeiro","guarda"];
 
+const spots = {};
 const hourLabels = ["03h","06h","09h","12h","15h","18h","21h"];
-const maxHeightScale = 2.2;
+let maxHeightScale = 2.2;
 let currentSpot = "campeche";
 let currentDay = 0;
+let dataLoaded = false;
+
+const weekdaysPT = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+const monthsPT = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+function round1(v){ return Math.round(v*10)/10; }
+
+async function fetchJSON(url){
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.json();
+}
+
+async function loadData(){
+  const lats = spotOrder.map(k => spotMeta[k].lat).join(",");
+  const lons = spotOrder.map(k => spotMeta[k].lon).join(",");
+
+  const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,wave_period,sea_surface_temperature&current=sea_surface_temperature&timezone=auto&forecast_days=5`;
+  const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m&daily=temperature_2m_max&timezone=auto&forecast_days=5`;
+
+  const [marineRaw, weatherRaw] = await Promise.all([fetchJSON(marineUrl), fetchJSON(weatherUrl)]);
+  const marineList = Array.isArray(marineRaw) ? marineRaw : [marineRaw];
+  const weatherList = Array.isArray(weatherRaw) ? weatherRaw : [weatherRaw];
+
+  let globalMax = 2.0;
+  const today = new Date();
+
+  spotOrder.forEach((key, idx) => {
+    const marine = marineList[idx];
+    const weather = weatherList[idx];
+    const wh = marine.hourly.wave_height;
+    const wp = marine.hourly.wave_period;
+    const sst = marine.hourly.sea_surface_temperature;
+    const wind = weather.hourly.wind_speed_10m;
+    const dailyMax = weather.daily.temperature_2m_max;
+
+    const days = [];
+    for (let d = 0; d < 5; d++){
+      const date = new Date(today);
+      date.setDate(today.getDate() + d);
+
+      const periodRanges = { "Manhã":[6,11], "Tarde":[12,17], "Noite":[18,23] };
+      const periods = Object.entries(periodRanges).map(([label,[a,b]]) => {
+        let maxH = 0, perAtMax = 10;
+        for (let h = a; h <= b; h++){
+          const i = d*24 + h;
+          if (wh[i] !== undefined && wh[i] > maxH){ maxH = wh[i]; perAtMax = Math.round(wp[i] || 10); }
+        }
+        return { label, h: round1(maxH), per: perAtMax };
+      });
+
+      const hourly = [3,6,9,12,15,18,21].map(h => round1(wh[d*24+h] ?? 0));
+
+      let windLo = Infinity, windHi = -Infinity;
+      for (let h = 0; h < 24; h++){
+        const v = wind[d*24+h];
+        if (v === undefined) continue;
+        if (v < windLo) windLo = v;
+        if (v > windHi) windHi = v;
+      }
+      if (!isFinite(windLo)) { windLo = 0; windHi = 0; }
+
+      let sstSum = 0, sstCount = 0;
+      for (let h = 0; h < 24; h++){
+        const v = sst[d*24+h];
+        if (v !== undefined){ sstSum += v; sstCount++; }
+      }
+      const water = sstCount ? round1(sstSum/sstCount) : null;
+
+      const dayMax = Math.max(...periods.map(p=>p.h), ...hourly);
+      if (dayMax > globalMax) globalMax = dayMax;
+
+      days.push({
+        name: weekdaysPT[date.getDay()],
+        date: `${date.getDate()} ${monthsPT[date.getMonth()]}`,
+        today: d === 0,
+        high: Math.round(dailyMax[d]),
+        windLo: Math.round(windLo),
+        windHi: Math.round(windHi),
+        water: water,
+        periods,
+        hourly
+      });
+    }
+
+    const currentWater = marine.current && marine.current.sea_surface_temperature !== undefined
+      ? round1(marine.current.sea_surface_temperature)
+      : days[0].water;
+
+    spots[key] = {
+      label: spotMeta[key].label,
+      sub: spotMeta[key].sub,
+      desc: spotMeta[key].desc,
+      waterTempNow: `${currentWater.toFixed(1)}°C`,
+      days
+    };
+  });
+
+  maxHeightScale = Math.ceil(globalMax * 1.15 * 10) / 10;
+  dataLoaded = true;
+}
 
 /* ---------- Tabs / cards ---------- */
 function renderTabs(){
@@ -499,13 +566,17 @@ function renderChart(){
   const padL = 34, padR = 14, padT = 18, padB = 30;
   const plotW = W - padL - padR;
   const plotH = H - padT - padB;
-  const maxScale = 2.2;
+  const maxScale = maxHeightScale;
 
   const xFor = i => padL + (i/(values.length-1)) * plotW;
   const yFor = v => padT + plotH - (v/maxScale)*plotH;
 
+  const step = maxScale > 3 ? 1 : 0.5;
+  const ticks = [];
+  for (let v = 0; v <= maxScale; v += step) ticks.push(round1(v));
+
   let grid = "";
-  [0,0.5,1,1.5,2].forEach(v => {
+  ticks.forEach(v => {
     const y = yFor(v);
     grid += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#254b6b" stroke-width="1" opacity="0.5"/>`;
     grid += `<text x="${padL-8}" y="${y+3}" font-family="SF Mono, Consolas, monospace" font-size="9" fill="#9fb9c9" text-anchor="end">${v.toFixed(1)}</text>`;
@@ -596,11 +667,20 @@ function render(){
   renderChart();
 }
 
-render();
-setUpdateLabel(true);
-startCountdown();
-scheduleAutoRefresh();
-setupWhatsApp();
+document.getElementById('days').innerHTML = '<div class="section-label" style="grid-column:1/-1">Carregando previsão em tempo real (Open-Meteo Marine)…</div>';
+
+loadData()
+  .then(() => {
+    render();
+    setUpdateLabel(true);
+    startCountdown();
+    scheduleAutoRefresh();
+    setupWhatsApp();
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById('days').innerHTML = '<div class="section-label" style="grid-column:1/-1;color:var(--alert)">Não foi possível carregar a previsão agora. Tente recarregar a página.</div>';
+  });
 </script>
 
 </body>
