@@ -427,7 +427,7 @@ const spots = {
 
 const hourLabels = ["03h","06h","09h","12h","15h","18h","21h"];
 const maxHeightScale = 2.2;
-let currentSpot = "guarda";
+let currentSpot = "campeche";
 let currentDay = 0;
 
 /* ---------- Tabs / cards ---------- */
@@ -548,7 +548,7 @@ function setupWhatsApp(){
     const s = spots[currentSpot];
     const d = s.days[currentDay];
     const maxH = Math.max(...d.periods.map(p=>p.h));
-    const msg = `🌊 Bora surfar em ${s.label}? ${d.name} (${d.date}) tá com picos de até ${maxH.toFixed(1)}m e água a ${d.water.toFixed(1)}°C. Confere a previsão completa!`;
+    const msg = `🌊 Bora surfar em ${s.label}? ${d.name} (${d.date}) tá com picos de até ${maxH.toFixed(1)}m e água a ${d.water.toFixed(1)}°C. Confere a previsão completa: https://sergiolopesaguiar.github.io/surf/`;
     const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
   });
