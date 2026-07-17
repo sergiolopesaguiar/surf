@@ -165,6 +165,14 @@
   }
   .sub-row b{color:var(--wind);}
   .sub-row .water{color:var(--water); font-weight:700;}
+  .temp-details{
+    display:flex; flex-direction:column; gap:3px;
+    font-family:var(--mono); font-size:11.5px; color:var(--foam-dim);
+    margin:4px 0 10px;
+  }
+  .temp-details span b{color:var(--foam); font-weight:700;}
+  .temp-details .t-max b{color:#ff9f6b;}
+  .temp-details .t-min b{color:#7fd4ef;}
   hr.wave-rule{
     border:none; height:6px; margin:10px 0 12px;
     background-image: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px);
@@ -413,7 +421,7 @@ async function loadData(){
   const lons = spotOrder.map(k => spotMeta[k].lon).join(",");
 
   const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,wave_period,sea_surface_temperature&current=sea_surface_temperature&timezone=auto&forecast_days=5`;
-  const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m&daily=temperature_2m_max&timezone=auto&forecast_days=5`;
+  const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m,temperature_2m&current=temperature_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=5`;
 
   const [marineRaw, weatherRaw] = await Promise.all([fetchJSON(marineUrl), fetchJSON(weatherUrl)]);
   const marineList = Array.isArray(marineRaw) ? marineRaw : [marineRaw];
@@ -429,7 +437,12 @@ async function loadData(){
     const wp = marine.hourly.wave_period;
     const sst = marine.hourly.sea_surface_temperature;
     const wind = weather.hourly.wind_speed_10m;
+    const hourlyTemp = weather.hourly.temperature_2m;
     const dailyMax = weather.daily.temperature_2m_max;
+    const dailyMin = weather.daily.temperature_2m_min;
+    const currentTempNow = weather.current && weather.current.temperature_2m !== undefined
+      ? weather.current.temperature_2m
+      : null;
 
     const days = [];
     for (let d = 0; d < 5; d++){
@@ -467,11 +480,21 @@ async function loadData(){
       const dayMax = Math.max(...periods.map(p=>p.h), ...hourly);
       if (dayMax > globalMax) globalMax = dayMax;
 
+      let current;
+      if (d === 0 && currentTempNow !== null){
+        current = Math.round(currentTempNow);
+      } else {
+        const hourIdx = d*24 + today.getHours();
+        current = hourlyTemp[hourIdx] !== undefined ? Math.round(hourlyTemp[hourIdx]) : Math.round(dailyMax[d]);
+      }
+
       days.push({
         name: weekdaysPT[date.getDay()],
         date: `${date.getDate()} ${monthsPT[date.getMonth()]}`,
         today: d === 0,
         high: Math.round(dailyMax[d]),
+        low: Math.round(dailyMin[d]),
+        current: current,
         windLo: Math.round(windLo),
         windHi: Math.round(windHi),
         water: water,
@@ -530,6 +553,11 @@ function renderCard(d){
     <div class="day-date">${d.date}</div>
     <div class="temp-row">
       <span class="temp-high">${d.high}°</span><span class="temp-unit">C ar</span>
+    </div>
+    <div class="temp-details">
+      <span class="t-now">🌡️ Atual: <b>${d.current}°C</b></span>
+      <span class="t-max">🔺 Máxima: <b>${d.high}°C</b></span>
+      <span class="t-min">🔻 Mínima: <b>${d.low}°C</b></span>
     </div>
     <div class="sub-row">
       <span>Vento: <b>${d.windLo}–${d.windHi} km/h</b></span>
