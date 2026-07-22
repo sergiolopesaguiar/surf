@@ -444,7 +444,6 @@
     Chamar pra surfar
   </button>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const spotMeta = {
   campeche: {
@@ -833,58 +832,19 @@ function isMobileDevice(){
   return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 }
 
-async function buildTideCardFile(){
-  if (!window.html2canvas) return null;
-  try {
-    const node = document.getElementById('tableCard');
-    const canvas = await html2canvas(node, { backgroundColor: '#0e2c46', scale: 2 });
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-    if (!blob) return null;
-    const s = spots[currentSpot];
-    const d = s.days[currentDay];
-    const fileName = `mares-${currentSpot}-${d.date.replace(' ', '-')}.png`;
-    return new File([blob], fileName, { type: 'image/png' });
-  } catch (e){
-    console.warn('Não foi possível gerar a imagem do card de marés:', e);
-    return null;
-  }
-}
-
-async function shareViaWhatsApp(){
-  const s = spots[currentSpot];
-  const d = s.days[currentDay];
-  const maxH = Math.max(...d.periods.map(p=>p.h));
-  const shareIn = (spotMeta[currentSpot] && spotMeta[currentSpot].shareIn) || `na praia do ${s.label}`;
-  const msg = `🌊 Bora surfar ${shareIn}? ${d.name} (${d.date}) tá com picos de até ${maxH.toFixed(1)}m e água a ${d.water.toFixed(1)}°C. Confere a previsão completa: https://sergiolopesaguiar.github.io/surf/`;
-
-  const file = await buildTideCardFile();
-
-  if (file && navigator.canShare && navigator.canShare({ files: [file] })){
-    try {
-      await navigator.share({ text: msg, files: [file] });
-      return;
-    } catch (e){
-      // usuário cancelou o compartilhamento nativo ou o navegador recusou — cai no fallback abaixo
-    }
-  }
-
-  if (file){
-    const dlUrl = URL.createObjectURL(file);
-    const a = document.createElement('a');
-    a.href = dlUrl; a.download = file.name;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(dlUrl), 4000);
-  }
-
-  const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
-}
-
 function setupWhatsApp(){
   const fab = document.getElementById('waFab');
   if (!isMobileDevice()){ return; }
   fab.classList.add('visible');
-  fab.addEventListener('click', shareViaWhatsApp);
+  fab.addEventListener('click', () => {
+    const s = spots[currentSpot];
+    const d = s.days[currentDay];
+    const maxH = Math.max(...d.periods.map(p=>p.h));
+    const shareIn = (spotMeta[currentSpot] && spotMeta[currentSpot].shareIn) || `na praia do ${s.label}`;
+    const msg = `🌊 Bora surfar ${shareIn}? ${d.name} (${d.date}) tá com picos de até ${maxH.toFixed(1)}m e água a ${d.water.toFixed(1)}°C. Confere a previsão completa: https://sergiolopesaguiar.github.io/surf/`;
+    const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+  });
 }
 
 /* ---------- Auto-refresh + update label ---------- */
