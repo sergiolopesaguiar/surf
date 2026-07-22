@@ -146,6 +146,12 @@
     background:linear-gradient(180deg, var(--navy-card) 0%, var(--navy) 100%);
     border:1px solid var(--line); border-radius:4px;
     padding:16px 14px 18px; position:relative; overflow:hidden;
+    cursor:pointer; transition:box-shadow .15s ease, border-color .15s ease;
+  }
+  .card:hover{border-color:var(--swell);}
+  .card.selected{
+    border-color:var(--swell);
+    box-shadow:0 0 0 2px rgba(79,179,217,0.45), 0 4px 16px rgba(0,0,0,0.35);
   }
   .card.today{border-color:var(--swell);}
   .card.today::before{
@@ -225,6 +231,62 @@
   .chart-note{
     font-family:var(--mono); font-size:10px; color:var(--foam-dim);
     margin-top:8px; text-align:right;
+  }
+
+  /* ---------- Gráfico + tabela lado a lado ---------- */
+  .chart-table-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:16px; align-items:start; }
+  @media (max-width:900px){
+    .chart-table-grid{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- Tide / hourly table ---------- */
+  .table-card{
+    background:linear-gradient(180deg, var(--navy-card) 0%, var(--navy) 100%);
+    border:1px solid var(--line); border-radius:6px; padding:16px 14px 12px;
+  }
+  .table-day-banner{
+    font-family:var(--serif); font-weight:700; font-size:16px;
+    letter-spacing:.04em; text-align:center; color:var(--foam);
+    background:rgba(255,255,255,0.04); border-radius:4px; padding:8px 0; margin-bottom:10px;
+  }
+  .tide-table{ width:100%; border-collapse:collapse; overflow-x:auto; display:block; }
+  .tide-row{
+    display:grid; grid-template-columns:52px 1.4fr 1.2fr 1.1fr;
+    align-items:center; gap:6px; padding:9px 6px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .tide-row.head{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--foam-dim); border-bottom:1px solid var(--line); padding-bottom:8px;
+  }
+  .tide-hour{ font-family:var(--mono); font-weight:700; font-size:13px; color:var(--foam); }
+  .tide-surf{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .tide-h-chip{
+    font-family:var(--mono); font-weight:700; font-size:12.5px;
+    background:rgba(79,179,217,0.18); color:var(--swell);
+    border-radius:3px; padding:2px 6px;
+  }
+  .tide-per{ font-family:var(--mono); font-size:10.5px; color:var(--foam-dim); }
+  .tide-arrow{ display:inline-block; font-size:12px; color:var(--foam-dim); }
+  .tide-wind{ display:flex; align-items:center; gap:6px; }
+  .tide-wind-pill{
+    font-family:var(--mono); font-weight:700; font-size:11px;
+    border-radius:3px; padding:3px 8px; color:#08321a; white-space:nowrap;
+  }
+  .tide-wind-pill.calm{ background:#8fe3a8; }
+  .tide-wind-pill.moderate{ background:var(--wind); color:#3a2600; }
+  .tide-wind-pill.strong{ background:var(--alert); color:#3a1200; }
+  .tide-maré{ font-family:var(--mono); font-size:11px; color:var(--foam-dim); white-space:nowrap; }
+  .tide-maré .arrow-up{ color:#7fe3a8; }
+  .tide-maré .arrow-down{ color:#ff9f6b; }
+  .tide-maré.empty{ opacity:0.35; }
+  .tide-key-hint{
+    font-family:var(--mono); font-size:10px; color:var(--foam-dim);
+    margin-top:10px; padding-top:8px; border-top:1px dashed var(--line);
+  }
+  @media (max-width:620px){
+    .tide-row{ grid-template-columns:38px 1.3fr 1fr 1fr; font-size:11px; }
+    .table-day-banner{ font-size:14px; }
   }
 
   footer{
@@ -352,9 +414,16 @@
         <div class="chart-title">Altura da onda ao longo do dia<span id="chartSpotLabel"></span></div>
         <div class="day-pills" id="dayPills"></div>
       </div>
-      <div class="chart-card">
-        <svg id="hourlyChart" viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg"></svg>
-        <div class="chart-note">dados a cada 3 horas (03h–21h) · fonte: Open-Meteo Marine</div>
+      <div class="chart-table-grid">
+        <div class="chart-card" id="chartCard">
+          <svg id="hourlyChart" viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="chart-note">dados a cada 3 horas (03h–21h) · fonte: Open-Meteo Marine</div>
+        </div>
+        <div class="table-card" id="tableCard">
+          <div class="table-day-banner" id="tableDayBanner"></div>
+          <div class="tide-table" id="tideTable"></div>
+          <div class="chart-note" id="tideNote">dados a cada 3 horas · ondas e vento: Open-Meteo Marine · marés: TidesAtlas</div>
+        </div>
       </div>
     </div>
 
@@ -398,12 +467,49 @@ const spotMeta = {
 };
 const spotOrder = ["campeche","matadeiro","guarda"];
 
+/* Chave gratuita da TidesAtlas (https://tidesatlas.com/api/register).
+   Sem chave, a coluna de Marés na aba Tabela fica em branco (o resto funciona normal). */
+const TIDESATLAS_API_KEY = "ta_c8857d7e308ccf53c334a6317ab1b52a036fe81fa853b9b983c0b5de5ac5";
+const TIDE_CACHE_HOURS = 12; // reaproveita a mesma consulta por 12h para não estourar a cota gratuita
+
 const spots = {};
+const tableHours = [0,3,6,9,12,15,18,21];
 const hourLabels = ["03h","06h","09h","12h","15h","18h","21h"];
 let maxHeightScale = 2.2;
 let currentSpot = "campeche";
 let currentDay = 0;
 let dataLoaded = false;
+
+function degToCompassPT(deg){
+  if (deg === undefined || deg === null || isNaN(deg)) return "--";
+  const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSO","SO","OSO","O","ONO","NO","NNO"];
+  const idx = Math.round(deg/22.5) % 16;
+  return dirs[(idx+16)%16];
+}
+
+async function fetchTideExtremes(key, lat, lon){
+  if (!TIDESATLAS_API_KEY || TIDESATLAS_API_KEY === "SUA_CHAVE_AQUI") return null;
+  const cacheKey = `tides_${key}`;
+  try {
+    const cached = JSON.parse(localStorage.getItem(cacheKey) || "null");
+    if (cached && (Date.now() - cached.fetchedAt) < TIDE_CACHE_HOURS*60*60*1000){
+      return cached.extremes;
+    }
+  } catch(e){ /* ignore cache errors */ }
+
+  try {
+    const url = `https://tidesatlas.com/api/v1/tides?lat=${lat}&lon=${lon}&days=5`;
+    const res = await fetch(url, { headers: { "X-API-Key": TIDESATLAS_API_KEY } });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const extremes = data.extremes || [];
+    localStorage.setItem(cacheKey, JSON.stringify({ fetchedAt: Date.now(), extremes }));
+    return extremes;
+  } catch(e){
+    console.warn("Maré indisponível para " + key + ":", e);
+    return null;
+  }
+}
 
 const weekdaysPT = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 const monthsPT = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
@@ -420,10 +526,14 @@ async function loadData(){
   const lats = spotOrder.map(k => spotMeta[k].lat).join(",");
   const lons = spotOrder.map(k => spotMeta[k].lon).join(",");
 
-  const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,wave_period,sea_surface_temperature&current=sea_surface_temperature&timezone=auto&forecast_days=5`;
-  const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m,temperature_2m&current=temperature_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=5`;
+  const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,wave_period,wave_direction,sea_surface_temperature&current=sea_surface_temperature&timezone=auto&forecast_days=5`;
+  const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m,wind_direction_10m,temperature_2m&current=temperature_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=5`;
 
-  const [marineRaw, weatherRaw] = await Promise.all([fetchJSON(marineUrl), fetchJSON(weatherUrl)]);
+  const [marineRaw, weatherRaw, tideResults] = await Promise.all([
+    fetchJSON(marineUrl),
+    fetchJSON(weatherUrl),
+    Promise.all(spotOrder.map(key => fetchTideExtremes(key, spotMeta[key].lat, spotMeta[key].lon)))
+  ]);
   const marineList = Array.isArray(marineRaw) ? marineRaw : [marineRaw];
   const weatherList = Array.isArray(weatherRaw) ? weatherRaw : [weatherRaw];
 
@@ -433,10 +543,13 @@ async function loadData(){
   spotOrder.forEach((key, idx) => {
     const marine = marineList[idx];
     const weather = weatherList[idx];
+    const tideExtremes = tideResults[idx];
     const wh = marine.hourly.wave_height;
     const wp = marine.hourly.wave_period;
+    const wd = marine.hourly.wave_direction;
     const sst = marine.hourly.sea_surface_temperature;
     const wind = weather.hourly.wind_speed_10m;
+    const windDir = weather.hourly.wind_direction_10m;
     const hourlyTemp = weather.hourly.temperature_2m;
     const dailyMax = weather.daily.temperature_2m_max;
     const dailyMin = weather.daily.temperature_2m_min;
@@ -488,6 +601,35 @@ async function loadData(){
         current = hourlyTemp[hourIdx] !== undefined ? Math.round(hourlyTemp[hourIdx]) : Math.round(dailyMax[d]);
       }
 
+      const tableRows = tableHours.map(h => {
+        const i = d*24 + h;
+        return {
+          hour: h,
+          waveH: round1(wh[i] ?? 0),
+          wavePer: Math.round(wp[i] || 0),
+          waveDir: degToCompassPT(wd ? wd[i] : undefined),
+          windSpd: Math.round(wind[i] ?? 0),
+          windDir: degToCompassPT(windDir ? windDir[i] : undefined),
+          tide: null
+        };
+      });
+
+      if (tideExtremes){
+        tideExtremes.forEach(e => {
+          const edt = new Date(e.datetime);
+          if (edt.getFullYear()===date.getFullYear() && edt.getMonth()===date.getMonth() && edt.getDate()===date.getDate()){
+            const hourDec = edt.getHours() + edt.getMinutes()/60;
+            const nearest = tableHours.reduce((a,b) => Math.abs(b-hourDec) < Math.abs(a-hourDec) ? b : a, tableHours[0]);
+            const row = tableRows.find(r => r.hour === nearest);
+            if (row){
+              const hh = String(edt.getHours()).padStart(2,'0');
+              const mm = String(edt.getMinutes()).padStart(2,'0');
+              row.tide = { time: `${hh}:${mm}`, type: e.type, height: Number(e.height_m).toFixed(1) };
+            }
+          }
+        });
+      }
+
       days.push({
         name: weekdaysPT[date.getDay()],
         date: `${date.getDate()} ${monthsPT[date.getMonth()]}`,
@@ -499,7 +641,8 @@ async function loadData(){
         windHi: Math.round(windHi),
         water: water,
         periods,
-        hourly
+        hourly,
+        tableRows
       });
     }
 
@@ -533,7 +676,7 @@ function renderTabs(){
   });
 }
 
-function renderCard(d){
+function renderCard(d, idx){
   const maxH = Math.max(...d.periods.map(p=>p.h));
   const alert = maxH >= 1.5;
   const periodsHTML = d.periods.map(p => `
@@ -548,7 +691,7 @@ function renderCard(d){
   `).join("");
 
   return `
-  <div class="card ${d.today ? 'today' : ''}">
+  <div class="card ${d.today ? 'today' : ''} ${idx === currentDay ? 'selected' : ''}" data-idx="${idx}">
     <div class="day-name">${d.name}</div>
     <div class="day-date">${d.date}</div>
     <div class="temp-row">
@@ -580,8 +723,54 @@ function renderDayPills(){
     <div class="day-pill ${i===currentDay?'active':''}" data-idx="${i}">${d.name.slice(0,3)} ${d.date.split(' ')[0]}</div>
   `).join("");
   pills.querySelectorAll('.day-pill').forEach(el => {
-    el.addEventListener('click', () => { currentDay = parseInt(el.dataset.idx); renderChart(); });
+    el.addEventListener('click', () => { currentDay = parseInt(el.dataset.idx); renderActiveView(); });
   });
+}
+
+function renderActiveView(){
+  renderChart();
+  renderTideTable();
+}
+
+function renderTideTable(){
+  const s = spots[currentSpot];
+  const day = s.days[currentDay];
+  document.getElementById('tableDayBanner').textContent = `${day.name.slice(0,3).toUpperCase()} ${day.date.split(' ')[0]}`;
+
+  const head = `
+    <div class="tide-row head">
+      <div>Hr</div><div>Surf</div><div>Vento</div><div>Maré</div>
+    </div>`;
+
+  const rows = day.tableRows.map(r => {
+    const windClass = r.windSpd < 15 ? 'calm' : (r.windSpd < 25 ? 'moderate' : 'strong');
+    const maréHTML = r.tide
+      ? `<span class="${r.tide.type === 'high' ? 'arrow-up' : 'arrow-down'}">${r.tide.type === 'high' ? '▲' : '▼'}</span> ${r.tide.time}h · ${r.tide.height}m`
+      : '—';
+    return `
+      <div class="tide-row">
+        <div class="tide-hour">${String(r.hour).padStart(2,'0')}h</div>
+        <div class="tide-surf">
+          <span class="tide-h-chip">${r.waveH.toFixed(1)}m</span>
+          <span class="tide-per">${r.wavePer}s</span>
+          <span class="tide-arrow">${r.waveDir}</span>
+        </div>
+        <div class="tide-wind">
+          <span class="tide-wind-pill ${windClass}">${r.windSpd} km/h</span>
+          <span class="tide-arrow">${r.windDir}</span>
+        </div>
+        <div class="tide-maré ${r.tide ? '' : 'empty'}">${maréHTML}</div>
+      </div>`;
+  }).join("");
+
+  document.getElementById('tideTable').innerHTML = head + rows;
+
+  const note = document.getElementById('tideNote');
+  if (!TIDESATLAS_API_KEY || TIDESATLAS_API_KEY === "SUA_CHAVE_AQUI"){
+    note.textContent = 'ondas e vento: Open-Meteo Marine · marés: configure uma chave da TidesAtlas para habilitar';
+  } else {
+    note.textContent = 'ondas e vento: Open-Meteo Marine (a cada 3h) · marés: TidesAtlas';
+  }
 }
 
 function renderChart(){
@@ -689,10 +878,24 @@ function render(){
   const s = spots[currentSpot];
   document.getElementById('spotDesc').textContent = s.desc;
   document.getElementById('waterTempNow').textContent = s.waterTempNow;
-  document.getElementById('days').innerHTML = s.days.map(renderCard).join("");
   currentDay = 0;
+  document.getElementById('days').innerHTML = s.days.map((d,i) => renderCard(d,i)).join("");
   renderDayPills();
-  renderChart();
+  renderActiveView();
+}
+
+function setupDayCardClicks(){
+  const daysEl = document.getElementById('days');
+  daysEl.addEventListener('click', (ev) => {
+    const card = ev.target.closest('.card');
+    if (!card) return;
+    const idx = parseInt(card.dataset.idx);
+    if (isNaN(idx) || idx === currentDay) return;
+    currentDay = idx;
+    daysEl.querySelectorAll('.card').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.idx) === idx));
+    renderDayPills();
+    renderActiveView();
+  });
 }
 
 document.getElementById('days').innerHTML = '<div class="section-label" style="grid-column:1/-1">Carregando previsão em tempo real (Open-Meteo Marine)…</div>';
@@ -704,6 +907,7 @@ loadData()
     startCountdown();
     scheduleAutoRefresh();
     setupWhatsApp();
+    setupDayCardClicks();
   })
   .catch(err => {
     console.error(err);
