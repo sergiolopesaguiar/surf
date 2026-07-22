@@ -402,7 +402,7 @@
     <div class="spot-meta">
       <div class="spot-desc" id="spotDesc"></div>
       <div class="water-temp-now">
-        <div class="label">Temp. da água agora</div>
+        <div class="label" id="waterTempLabel">Temp. da água agora</div>
         <div class="value" id="waterTempNow"></div>
       </div>
     </div>
@@ -444,24 +444,28 @@
     Chamar pra surfar
   </button>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const spotMeta = {
   campeche: {
     label: "Campeche",
     sub: "praia exposta · direita longa",
     desc: "Beach break exposto, funciona melhor com swell grande de Sul e vento offshore de noroeste. Pico mais irregular dos três — quando fecha, é um dos melhores do Brasil.",
+    shareIn: "na praia do Campeche",
     lat: -27.6801, lon: -48.4728
   },
   matadeiro: {
     label: "Matadeiro",
     sub: "baía protegida · esquerda",
     desc: "Recebe swell de Sul/Sudeste dentro da baía, com bancos de areia geralmente bem posicionados no canto esquerdo. Boa opção quando o mar aberto está grande demais.",
+    shareIn: "na praia do Matadeiro",
     lat: -27.7357, lon: -48.5069
   },
   guarda: {
     label: "Guarda do Embaú",
     sub: "foz de rio · pico mais consistente",
     desc: "Point break de foz de rio, considerado o pico mais confiável da região — funciona bem com swell distante de Sudeste. Ideal na maré baixa e com vento de oeste-noroeste.",
+    shareIn: "em Guarda do Embaú",
     lat: -28.0206, lon: -48.6172
   }
 };
@@ -728,6 +732,7 @@ function renderDayPills(){
 }
 
 function renderActiveView(){
+  updateWaterTemp();
   renderChart();
   renderTideTable();
 }
@@ -828,18 +833,58 @@ function isMobileDevice(){
   return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 }
 
+async function buildTideCardFile(){
+  if (!window.html2canvas) return null;
+  try {
+    const node = document.getElementById('tableCard');
+    const canvas = await html2canvas(node, { backgroundColor: '#0e2c46', scale: 2 });
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) return null;
+    const s = spots[currentSpot];
+    const d = s.days[currentDay];
+    const fileName = `mares-${currentSpot}-${d.date.replace(' ', '-')}.png`;
+    return new File([blob], fileName, { type: 'image/png' });
+  } catch (e){
+    console.warn('Não foi possível gerar a imagem do card de marés:', e);
+    return null;
+  }
+}
+
+async function shareViaWhatsApp(){
+  const s = spots[currentSpot];
+  const d = s.days[currentDay];
+  const maxH = Math.max(...d.periods.map(p=>p.h));
+  const shareIn = (spotMeta[currentSpot] && spotMeta[currentSpot].shareIn) || `na praia do ${s.label}`;
+  const msg = `🌊 Bora surfar ${shareIn}? ${d.name} (${d.date}) tá com picos de até ${maxH.toFixed(1)}m e água a ${d.water.toFixed(1)}°C. Confere a previsão completa: https://sergiolopesaguiar.github.io/surf/`;
+
+  const file = await buildTideCardFile();
+
+  if (file && navigator.canShare && navigator.canShare({ files: [file] })){
+    try {
+      await navigator.share({ text: msg, files: [file] });
+      return;
+    } catch (e){
+      // usuário cancelou o compartilhamento nativo ou o navegador recusou — cai no fallback abaixo
+    }
+  }
+
+  if (file){
+    const dlUrl = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = dlUrl; a.download = file.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(dlUrl), 4000);
+  }
+
+  const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
 function setupWhatsApp(){
   const fab = document.getElementById('waFab');
   if (!isMobileDevice()){ return; }
   fab.classList.add('visible');
-  fab.addEventListener('click', () => {
-    const s = spots[currentSpot];
-    const d = s.days[currentDay];
-    const maxH = Math.max(...d.periods.map(p=>p.h));
-    const msg = `🌊 Bora surfar em ${s.label}? ${d.name} (${d.date}) tá com picos de até ${maxH.toFixed(1)}m e água a ${d.water.toFixed(1)}°C. Confere a previsão completa: https://sergiolopesaguiar.github.io/surf/`;
-    const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank');
-  });
+  fab.addEventListener('click', shareViaWhatsApp);
 }
 
 /* ---------- Auto-refresh + update label ---------- */
@@ -873,11 +918,24 @@ function scheduleAutoRefresh(){
 }
 
 /* ---------- Render ---------- */
+function updateWaterTemp(){
+  const s = spots[currentSpot];
+  const day = s.days[currentDay];
+  const label = document.getElementById('waterTempLabel');
+  const value = document.getElementById('waterTempNow');
+  if (day.today){
+    label.textContent = 'Temp. da água agora';
+    value.textContent = s.waterTempNow;
+  } else {
+    label.textContent = `Temp. da água · ${day.name}`;
+    value.textContent = `${day.water.toFixed(1)}°C`;
+  }
+}
+
 function render(){
   renderTabs();
   const s = spots[currentSpot];
   document.getElementById('spotDesc').textContent = s.desc;
-  document.getElementById('waterTempNow').textContent = s.waterTempNow;
   currentDay = 0;
   document.getElementById('days').innerHTML = s.days.map((d,i) => renderCard(d,i)).join("");
   renderDayPills();
