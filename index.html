@@ -167,13 +167,13 @@
   .temp-unit{font-size:13px; color:var(--foam-dim);}
   .sub-row{
     display:flex; justify-content:space-between; font-family:var(--mono);
-    font-size:11px; color:var(--foam-dim); margin-bottom:12px; gap:8px; flex-wrap:wrap;
+    font-size:13.5px; color:var(--foam-dim); margin-bottom:12px; gap:8px; flex-wrap:wrap;
   }
   .sub-row b{color:var(--wind);}
   .sub-row .water{color:var(--water); font-weight:700;}
   .temp-details{
-    display:flex; flex-direction:column; gap:3px;
-    font-family:var(--mono); font-size:11.5px; color:var(--foam-dim);
+    display:flex; flex-direction:column; gap:5px;
+    font-family:var(--mono); font-size:14px; color:var(--foam-dim);
     margin:4px 0 10px;
   }
   .temp-details span b{color:var(--foam); font-weight:700;}
@@ -199,6 +199,8 @@
   .swell-meta{ display:flex; align-items:center; gap:5px; font-family:var(--mono); font-size:12px; white-space:nowrap; }
   .swell-h{font-weight:700; color:var(--foam);}
   .swell-period{color:var(--foam-dim); font-size:10px;}
+  .swell-dir{color:var(--swell); font-size:10px; font-weight:700; letter-spacing:.03em;}
+  .dir-tag{color:var(--swell); font-weight:700;}
   .max-flag{
     margin-top:12px; padding-top:10px; border-top:1px dashed var(--line);
     font-family:var(--mono); font-size:10.5px; color:var(--alert);
@@ -567,24 +569,25 @@ async function loadData(){
 
       const periodRanges = { "Manhã":[6,11], "Tarde":[12,17], "Noite":[18,23] };
       const periods = Object.entries(periodRanges).map(([label,[a,b]]) => {
-        let maxH = 0, perAtMax = 10;
+        let maxH = 0, perAtMax = 10, dirAtMax = undefined;
         for (let h = a; h <= b; h++){
           const i = d*24 + h;
-          if (wh[i] !== undefined && wh[i] > maxH){ maxH = wh[i]; perAtMax = Math.round(wp[i] || 10); }
+          if (wh[i] !== undefined && wh[i] > maxH){ maxH = wh[i]; perAtMax = Math.round(wp[i] || 10); dirAtMax = wd ? wd[i] : undefined; }
         }
-        return { label, h: round1(maxH), per: perAtMax };
+        return { label, h: round1(maxH), per: perAtMax, dir: degToCompassPT(dirAtMax) };
       });
 
       const hourly = [3,6,9,12,15,18,21].map(h => round1(wh[d*24+h] ?? 0));
 
-      let windLo = Infinity, windHi = -Infinity;
+      let windLo = Infinity, windHi = -Infinity, windDirAtHi = undefined;
       for (let h = 0; h < 24; h++){
         const v = wind[d*24+h];
         if (v === undefined) continue;
         if (v < windLo) windLo = v;
-        if (v > windHi) windHi = v;
+        if (v > windHi) { windHi = v; windDirAtHi = windDir ? windDir[d*24+h] : undefined; }
       }
       if (!isFinite(windLo)) { windLo = 0; windHi = 0; }
+      const windDirLabel = degToCompassPT(windDirAtHi);
 
       let sstSum = 0, sstCount = 0;
       for (let h = 0; h < 24; h++){
@@ -642,6 +645,7 @@ async function loadData(){
         current: current,
         windLo: Math.round(windLo),
         windHi: Math.round(windHi),
+        windDir: windDirLabel,
         water: water,
         periods,
         hourly,
@@ -689,6 +693,7 @@ function renderCard(d, idx){
       <div class="swell-meta">
         <span class="swell-h">${p.h.toFixed(1)}m</span>
         <span class="swell-period">${p.per}s</span>
+        <span class="swell-dir">${p.dir}</span>
       </div>
     </div>
   `).join("");
@@ -706,7 +711,7 @@ function renderCard(d, idx){
       <span class="t-min">🔻 Mínima: <b>${d.low}°C</b></span>
     </div>
     <div class="sub-row">
-      <span>Vento: <b>${d.windLo}–${d.windHi} km/h</b></span>
+      <span>Vento: <b>${d.windLo}–${d.windHi} km/h</b> <span class="dir-tag">${d.windDir}</span></span>
       <span>Água: <span class="water">${d.water.toFixed(1)}°C</span></span>
     </div>
     <hr class="wave-rule">
